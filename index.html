@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Makerspace Quest</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="stage">
+    <canvas id="game"></canvas>
+    <div id="overlay"></div>
+  </div>
+
+  <!-- 1. DATA — edit these to change the content of the game -->
+  <script src="data/settings.js"></script>
+  <script src="data/makerspace.js"></script>
+  <script src="data/stations.js"></script>
+  <script src="data/games/checkin.js"></script>
+  <script src="data/games/values.js"></script>
+  <script src="data/games/hours.js"></script>
+  <script src="data/games/tools.js"></script>
+  <script src="data/games/printing.js"></script>
+  <script src="data/games/laser.js"></script>
+  <script src="data/games/recycling.js"></script>
+  <script src="data/games/craft.js"></script>
+  <script src="data/games/ideas.js"></script>
+
+  <!-- 2. ENGINE -->
+  <script src="engine/core.js"></script>
+  <script src="engine/input.js"></script>
+  <script src="engine/audio.js"></script>
+  <script src="engine/save.js"></script>
+  <script src="engine/draw.js"></script>
+  <script src="engine/ui.js"></script>
+  <script src="engine/quiz.js"></script>
+  <script src="engine/scenes/title.js"></script>
+  <script src="engine/scenes/world.js"></script>
+  <script src="engine/scenes/wheel.js"></script>
+  <script src="engine/scenes/minigame.js"></script>
+  <script src="engine/scenes/finale.js"></script>
+
+  <!-- 3. MINI-GAMES — one file each -->
+  <script src="games/checkin.js"></script>
+  <script src="games/values.js"></script>
+  <script src="games/hours.js"></script>
+  <script src="games/tools.js"></script>
+  <script src="games/printing.js"></script>
+  <script src="games/laser.js"></script>
+  <script src="games/recycling.js"></script>
+  <script src="games/craft.js"></script>
+  <script src="games/ideas.js"></script>
+
+  <script>MS.engine.start("title");</script>
+</body>
+</html>
