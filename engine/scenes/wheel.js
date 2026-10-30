@@ -14,6 +14,9 @@
     return Math.floor((a / (Math.PI * 2)) * n) % n;
   };
 
+  // replace the wheel in the history, so Back from the next view goes home
+  const swap = (hash) => { history.replaceState(history.state, "", "#" + hash); MS.engine.route(); };
+
   function spin() {
     if (spinning) return;
     let pool = S.wheel.skipCompleted ? segs.filter((s) => !MS.save.has(s.id)) : segs;
@@ -21,7 +24,7 @@
       MS.ui.card({
         title: "🏆 The wheel is done with you!",
         blurb: "You've completed every section.",
-        buttons: [{ label: "Get my Maker Pass", primary: true, onClick: () => MS.engine.setScene("finale") }, { label: "Back to map", onClick: () => MS.engine.setScene("world") }],
+        buttons: [{ label: "Get my Maker Pass", primary: true, onClick: () => swap("pass") }, { label: "Back", onClick: () => MS.back() }],
       });
       return;
     }
@@ -36,13 +39,15 @@
 
   function landed() {
     spinning = false;
-    MS.save.set("target", chosen.id);
     MS.audio.play("win");
     MS.ui.card({
       title: "🎯 " + chosen.name + "!",
       photo: chosen.photo,
-      blurb: chosen.blurb + " Find the " + chosen.name + " on the map — follow the arrow — explore it and play its mini-game.",
-      buttons: [{ label: "Let's go!", primary: true, onClick: () => MS.engine.setScene("world") }],
+      blurb: chosen.blurb + " Read up on it, then play its mini-game.",
+      buttons: [
+        { label: "▶ Play now", primary: true, onClick: () => swap("play/" + chosen.id) },
+        { label: "Tell me more", onClick: () => swap(chosen.id) },
+      ],
     });
   }
 
@@ -62,7 +67,7 @@
         if (t >= 1) landed();
       } else {
         if (I.pressed(" ", "enter", "e")) spin();
-        if (I.pressed("escape")) MS.engine.setScene("world");
+        if (I.pressed("escape")) MS.back();
       }
     },
     draw(g) {
@@ -100,7 +105,7 @@
 
       if (!spinning && !MS.ui.isOpen()) {
         if (D.button(g, { x: CX - 50, y: CY - 50, w: 100, h: 100 }, "SPIN", { size: 24, color: C.accent })) spin();
-        if (D.button(g, { x: 20, y: 540, w: 150, h: 40 }, "← Back to map", { size: 15, color: "#3a4256" })) MS.engine.setScene("world");
+        if (D.button(g, { x: 20, y: 540, w: 150, h: 40 }, "← Back", { size: 15, color: "#3a4256" })) MS.back();
         D.text(g, "Space / click to spin", CX, 585, { size: 14, align: "center", color: "#aab" });
       } else {
         D.rr(g, CX - 40, CY - 40, 80, 80, 40, "#1f2430", "#fff", 4);

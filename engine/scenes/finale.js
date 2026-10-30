@@ -36,8 +36,8 @@
         "</div>",
       buttons: [
         { label: "🖨️ Print my Maker Pass", primary: true, keepOpen: true, onClick: () => window.print() },
-        { label: "Back to the map", onClick: () => MS.engine.setScene("world") },
-        { label: "Start over", onClick: () => { MS.save.reset(); MS.engine.setScene("title"); } },
+        { label: "Back", onClick: () => MS.back() },
+        { label: "Start over", onClick: () => { MS.save.reset(); location.replace("#"); } },
       ],
     });
   }
