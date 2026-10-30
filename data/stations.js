@@ -2,7 +2,7 @@
 //  STATIONS — the sections of the Makerspace.
 //
 //  Each station = one area of the real Makerspace.
-//    id      unique name (used for saving progress, and in QR links: index.html#<id>)
+//    id      unique name (used for saving progress, and in QR links: index.html?at=<id>)
 //    name    shown on the home screen and info card
 //    color   accent colour (wheel segment, card stripe)
 //    game    id of the mini-game in /games (or null = info only, no badge)

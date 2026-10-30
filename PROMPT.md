@@ -64,7 +64,7 @@ The core loop is **sections + mini-games, spread over several visits**:
 ## 4. Technology
 
 - **HTML + Canvas + plain JavaScript, zero dependencies, no build step.** Hosted on GitHub Pages
-  (needed for phones / QR codes); also opens by double-clicking `index.html` (works from `file://`).
+  (needed for phones / QR codes) or any local static server.
 - The home screen is a normal HTML page; mini-games and the wheel are a 450×800 portrait canvas.
 - Every view has a URL hash (`#<station>`, `#play/<id>`, `#wheel`, `#pass`) so the phone Back button
   and QR deep links work.
@@ -129,7 +129,7 @@ the official check-in.
 
 - [ ] Readable and fully playable by touch on a portrait phone (≈375×812); no keyboard needed.
 - [ ] The phone Back button moves between views and never leaves the game when opened from a QR code.
-- [ ] `index.html#<station>` opens that section and unlocks its mini-game.
+- [ ] `index.html?at=<station>` (the QR link) opens that section and unlocks its mini-game; reloading doesn't count as a scan.
 - [ ] Every whiteboard note above appears somewhere in play (info page, mini-game or Maker Pass).
 - [ ] Changing `hours` in `data/makerspace.js` changes the info page, Today card, hours quiz and Maker Pass.
 - [ ] Each mini-game lives in its own file and reads its content from its own data file.

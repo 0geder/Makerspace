@@ -54,4 +54,8 @@
   };
 
   MS.save.visit(new Date());
+  // a phone may bring the tab back from the background days later: that's a visit too
+  if (typeof document !== "undefined") {
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) MS.save.visit(new Date()); });
+  }
 })();

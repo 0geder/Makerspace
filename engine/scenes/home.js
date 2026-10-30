@@ -1,6 +1,6 @@
 // Home scene: the phone-first home page. Plain HTML that scrolls like a web page.
 //   enter({})          → the list of sections
-//   enter({ station }) → that section, big (QR codes in the space land here: index.html#<id>)
+//   enter({ station }) → that section, big (QR codes in the space land here: index.html?at=<id>)
 //   enter({ pass })    → the Maker Pass
 (function () {
   const S = MS.data.settings, M = MS.data.makerspace;

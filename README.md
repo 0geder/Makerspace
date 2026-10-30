@@ -10,7 +10,8 @@ come back, and a daily challenge gives them a reason to open it on every visit.
 
 - **Phones need a hosted link.** Host it free on **GitHub Pages**: repo → *Settings → Pages →
   Deploy from branch → `main` / root*. A QR code can't open a file on a laptop.
-- On a computer you can also just double-click `index.html`. No install, no server, no internet.
+- On a computer, use the Pages link, or run any local web server in this folder
+  (e.g. `py -m http.server`) and open `http://localhost:8000`. No install, no internet.
 - Tap (or click) everything. Desktop extras: **Esc** leaves a mini-game, **M** mutes, arrow keys
   work in the action games.
 - Progress saves automatically in the browser on that phone.
@@ -28,23 +29,24 @@ come back, and a daily challenge gives them a reason to open it on every visit.
 
 ## QR codes for each area
 
-Each section has its own link: your Pages URL plus `#` and the station `id` from
-`data/stations.js`. Put each one into any QR-code generator and stick it in that area,
+Each section has its own link: your Pages URL plus `?at=` and the station `id` from
+`data/stations.js`. Opening it counts as being in that area (it unlocks the mini-game);
+a plain `#<id>` link opens the same page without unlocking anything. Put each one into any QR-code generator and stick it in that area,
 e.g. next to the machine usage QR.
 
 | Area | Link |
 |---|---|
-| Entrance & Check-in | `https://<your-pages-url>/#entrance` |
-| Values Whiteboard | `https://<your-pages-url>/#values` |
-| Community Area | `https://<your-pages-url>/#community` |
-| Hand-Tool Bench | `https://<your-pages-url>/#tools` |
-| Showcase Shelf | `https://<your-pages-url>/#showcase` |
-| Craft & Print Bench | `https://<your-pages-url>/#craft` |
-| 3D Printing Room | `https://<your-pages-url>/#printing` |
-| Laser Room | `https://<your-pages-url>/#laser` |
-| Recycling Corner | `https://<your-pages-url>/#recycling` |
-| Idea Lab Desk | `https://<your-pages-url>/#ideas` |
-| Lockers & Lounge | `https://<your-pages-url>/#lounge` |
+| Entrance & Check-in | `https://<your-pages-url>/?at=entrance` |
+| Values Whiteboard | `https://<your-pages-url>/?at=values` |
+| Community Area | `https://<your-pages-url>/?at=community` |
+| Hand-Tool Bench | `https://<your-pages-url>/?at=tools` |
+| Showcase Shelf | `https://<your-pages-url>/?at=showcase` |
+| Craft & Print Bench | `https://<your-pages-url>/?at=craft` |
+| 3D Printing Room | `https://<your-pages-url>/?at=printing` |
+| Laser Room | `https://<your-pages-url>/?at=laser` |
+| Recycling Corner | `https://<your-pages-url>/?at=recycling` |
+| Idea Lab Desk | `https://<your-pages-url>/?at=ideas` |
+| Lockers & Lounge | `https://<your-pages-url>/?at=lounge` |
 
 The game does **not** replace the official check-in: progress lives only on the member's
 phone, so staff can't see it.

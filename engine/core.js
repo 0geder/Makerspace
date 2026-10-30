@@ -66,7 +66,7 @@
     },
 
     // Every view has a URL hash, so the phone's Back button and QR deep links work:
-    //   #            home          #<station>       that station, big (QR codes point here)
+    //   #            home          #<station>       that station, big (QR codes use ?at=<station>)
     //   #play/<id>   its mini-game #wheel           the Maker Wheel     #pass   the Maker Pass
     route() {
       if (location.hash === E.routed) return; // popstate + hashchange both fire on Back
@@ -76,13 +76,15 @@
       if (view === "play" && st && st.game && MS.games[st.game] && MS.save.canPlay(st)) E.setScene("minigame", { station: st });
       else if (view === "wheel") E.setScene("wheel");
       else if (view === "pass") E.setScene("home", { pass: true });
-      // the first view of a page load that lands on a station = a QR code in that area was scanned
-      else E.setScene("home", { station: st, scanned: !!st && view === st.id && !E.routedBefore });
-      E.routedBefore = true;
+      else E.setScene("home", { station: st, scanned: !!st && st.id === E.scannedAt });
+      E.scannedAt = null;
     },
 
     start() {
       E.init();
+      // QR codes in the space link to ?at=<station>. Swap it for #<station> so a reload isn't another scan.
+      const at = new URLSearchParams(location.search).get("at");
+      if (at) { E.scannedAt = at; history.replaceState(null, "", location.pathname + "#" + at); }
       window.addEventListener("hashchange", E.route);
       window.addEventListener("popstate", E.route);
       E.route();
