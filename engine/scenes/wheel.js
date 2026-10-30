@@ -2,7 +2,7 @@
 (function () {
   const D = MS.draw, U = MS.util, I = MS.input;
   const S = MS.data.settings, C = S.colors;
-  const CX = 480, CY = 320, R = 220;
+  const CX = 225, CY = 400, R = 190;
 
   let segs = [], rot = 0, from = 0, to = 0, t = 0, spinning = false, chosen = null, lastSeg = -1;
 
@@ -71,13 +71,13 @@
       }
     },
     draw(g) {
-      g.fillStyle = "#1f2430"; g.fillRect(0, 0, 960, 600);
+      g.fillStyle = "#1f2430"; g.fillRect(0, 0, 450, 800);
       // rays
       g.save(); g.translate(CX, CY); g.rotate(MS.engine.time * 0.1);
       for (let i = 0; i < 16; i++) { g.rotate(Math.PI / 8); g.fillStyle = i % 2 ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.06)"; g.beginPath(); g.moveTo(0, 0); g.lineTo(700, -90); g.lineTo(700, 90); g.fill(); }
       g.restore();
 
-      D.text(g, "Spin the Maker Wheel!", CX, 50, { size: 32, bold: true, align: "center", color: C.yellow, shadow: "rgba(0,0,0,0.4)" });
+      D.text(g, "Spin the Maker Wheel!", CX, 110, { size: 28, bold: true, align: "center", color: C.yellow, shadow: "rgba(0,0,0,0.4)" });
 
       const n = segs.length;
       g.save(); g.translate(CX, CY); g.rotate(rot);
@@ -88,8 +88,8 @@
         g.beginPath(); g.moveTo(0, 0); g.arc(0, 0, R, a0, a1); g.closePath(); g.fill();
         g.strokeStyle = "#fff"; g.lineWidth = 3; g.stroke();
         g.save(); g.rotate((a0 + a1) / 2);
-        D.text(g, s.badge.icon, R - 34, 8, { size: 24, emoji: true, align: "center" });
-        D.text(g, (done ? "✓ " : "") + s.name, R - 58, 5, { size: 13, bold: true, align: "right" });
+        D.text(g, s.badge.icon, R - 28, 8, { size: 22, emoji: true, align: "center" });
+        D.text(g, (done ? "✓ " : "") + s.name, R - 48, 4, { size: 11, bold: true, align: "right" });
         g.restore();
       });
       g.restore();
@@ -105,8 +105,7 @@
 
       if (!spinning && !MS.ui.isOpen()) {
         if (D.button(g, { x: CX - 50, y: CY - 50, w: 100, h: 100 }, "SPIN", { size: 24, color: C.accent })) spin();
-        if (D.button(g, { x: 20, y: 540, w: 150, h: 40 }, "← Back", { size: 15, color: "#3a4256" })) MS.back();
-        D.text(g, "Space / click to spin", CX, 585, { size: 14, align: "center", color: "#aab" });
+        if (D.button(g, { x: 16, y: 724, w: 140, h: 52 }, "← Back", { size: 17, color: "#3a4256" })) MS.back();
       } else {
         D.rr(g, CX - 40, CY - 40, 80, 80, 40, "#1f2430", "#fff", 4);
       }

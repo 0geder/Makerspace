@@ -10,7 +10,7 @@ MS.games.craft = {
         choices: [right].concat(others).map((m) => ({ label: m.name, photo: m.photo, correct: m === right })),
       };
     });
-    const quiz = MS.Quiz(questions, { photos: true, area: { x: 130, y: 70, w: 700, h: 520 } });
+    const quiz = MS.Quiz(questions, { photos: true, area: { x: 16, y: 72, w: 418, h: 712 } });
     let finished = false;
     return {
       update(dt) {

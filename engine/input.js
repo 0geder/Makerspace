@@ -2,8 +2,10 @@
 (function () {
   const held = new Set();
   const pressed = new Set();
+  let swipeFrom = 0;
   const I = (MS.input = {
     mouse: { x: 0, y: 0, down: false, clicked: false, moved: false },
+    swipe: 0, // -1 / 1 on the frame a horizontal swipe ends
 
     init(canvas) {
       window.addEventListener("keydown", (e) => {
@@ -28,9 +30,15 @@
         toGame(e);
         I.mouse.down = true;
         I.mouse.clicked = true;
+        swipeFrom = I.mouse.x;
         MS.audio.unlock();
       });
-      window.addEventListener("pointerup", () => (I.mouse.down = false));
+      window.addEventListener("pointerup", (e) => {
+        I.mouse.down = false;
+        toGame(e);
+        const dx = I.mouse.x - swipeFrom;
+        if (Math.abs(dx) > 60) I.swipe = Math.sign(dx);
+      });
     },
 
     down: (...keys) => keys.some((k) => held.has(k)),
@@ -55,6 +63,7 @@
       pressed.clear();
       I.mouse.clicked = false;
       I.mouse.moved = false;
+      I.swipe = 0;
     },
   });
 })();

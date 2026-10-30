@@ -1,9 +1,9 @@
 // Mini-game content: CHECK-IN — "Order the steps"
-// Click the steps in the correct order. `steps` must be listed in the CORRECT order;
+// Tap the steps in the correct order. `steps` must be listed in the CORRECT order;
 // the game shuffles them.
 MS.data.games.checkin = {
   title: "First Visit: Step by Step",
-  intro: "Put a new member's journey in the right order. Click the steps from first to last.",
+  intro: "Put a new member's journey in the right order. Tap the steps from first to last.",
   lives: 3,
   steps: [
     "Scan the QR on the Check-in stand at the entrance",

@@ -1,11 +1,11 @@
 // Mini-game content: 3D PRINTING — "Layer stacker" + quick-check questions.
 MS.data.games.printing = {
   title: "Layer by Layer",
-  intro: "3D printers build parts one layer at a time. Press SPACE (or click) to drop each layer right on top of the last. Overhang gets trimmed — don't run out of model!",
+  intro: "3D printers build parts one layer at a time. Tap to drop each layer right on top of the last. Overhang gets trimmed — don't run out of model!",
   layersToWin: 10,
-  startWidth: 220,       // width of the first layer in pixels
-  startSpeed: 180,       // nozzle speed (pixels/sec); increases each layer
-  speedUp: 18,
+  startWidth: 180,       // width of the first layer in pixels (the screen is 450 wide)
+  startSpeed: 130,       // nozzle speed (pixels/sec); increases each layer
+  speedUp: 12,
   // Asked after stacking. You need `passMark` of them right to earn the badge.
   passMark: 0.6,
   checks: [

@@ -3,7 +3,7 @@
 // whiteboard is only defined once. Settings for this game live here.
 MS.data.games.values = {
   title: "Values Venn",
-  intro: "Each sticky note belongs somewhere on the whiteboard. Click the right part of the Venn diagram — overlaps count!",
+  intro: "Each sticky note belongs somewhere on the whiteboard. Tap the right part of the Venn diagram — overlaps count!",
   rounds: 10,      // how many notes per game (picked at random from the board)
   passMark: 0.7,
   learned: [

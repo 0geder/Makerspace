@@ -1,8 +1,8 @@
 // Mini-game content: RECYCLING — "Sort it"
-// Items appear one by one; click (or press 1–4) the right destination.
+// Items appear one by one; tap (or press 1–4) the right destination.
 MS.data.games.recycling = {
   title: "Sort It Out",
-  intro: "Waste is material in the wrong place. Send each item to the right bin before time runs out. Keys 1–4 work too.",
+  intro: "Waste is material in the wrong place. Tap the right bin for each item before time runs out.",
   secondsPerItem: 6,
   rounds: 12,
   passMark: 0.75,

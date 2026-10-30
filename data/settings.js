@@ -10,9 +10,10 @@ MS.data.settings = {
   subtitle: "Learn the space. Win mini-games. Earn your Maker Pass.",
   defaultName: "Maker",
 
-  // Logical canvas size of the mini-games (scaled to fit the screen).
-  width: 960,
-  height: 600,
+  // Logical canvas size of the mini-games: portrait, phone first (scaled to fit the screen).
+  // The mini-games in /games are laid out for exactly this size.
+  width: 450,
+  height: 800,
 
   wheel: {
     spinSeconds: 3.5,

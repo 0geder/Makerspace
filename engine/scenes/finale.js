@@ -46,19 +46,19 @@
     enter() {
       MS.audio.play("win");
       confetti = Array.from({ length: 150 }, () => ({
-        x: Math.random() * 960, y: Math.random() * -600, v: 60 + Math.random() * 120,
+        x: Math.random() * 450, y: Math.random() * -800, v: 60 + Math.random() * 120,
         c: MS.util.pick([C.yellow, C.accent, C.good, "#2f80ed", "#9b59b6"]), s: 4 + Math.random() * 6, r: Math.random() * 6,
       }));
       certificate();
     },
     update(dt) {
-      confetti.forEach((p) => { p.y += p.v * dt; p.r += dt * 4; if (p.y > 620) { p.y = -10; p.x = Math.random() * 960; } });
+      confetti.forEach((p) => { p.y += p.v * dt; p.r += dt * 4; if (p.y > 820) { p.y = -10; p.x = Math.random() * 450; } });
       if (!MS.ui.isOpen()) certificate();
     },
     draw(g) {
-      g.fillStyle = "#1f2430"; g.fillRect(0, 0, 960, 600);
+      g.fillStyle = "#1f2430"; g.fillRect(0, 0, 450, 800);
       confetti.forEach((p) => { g.save(); g.translate(p.x, p.y); g.rotate(p.r); g.fillStyle = p.c; g.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); g.restore(); });
-      D.text(g, "🏆", 480, 80, { size: 40, emoji: true, align: "center" });
+      D.text(g, "🏆", 225, 80, { size: 40, emoji: true, align: "center" });
     },
   };
 })();
