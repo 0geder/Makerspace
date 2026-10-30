@@ -29,10 +29,12 @@
       </section>`;
     }
     const { got, total } = badgeCount();
+    const lv = MS.save.level(), next = MS.save.nextLevel(), n = MS.save.visits();
     return `<section class="hero">
       <h1>Hi, ${esc(st.name)} 👋</h1>
+      <p class="chip">⭐ Level ${lv.level} · ${esc(lv.name)} <span>· visit ${n}</span></p>
       <div class="progress"><div style="width:${(got / total) * 100}%"></div></div>
-      <p class="small">${got} / ${total} badges collected</p>
+      <p class="small">${got} / ${total} badges collected${next ? ` · come back on ${next.visits - n === 1 ? "another day" : (next.visits - n) + " more days"} to reach Level ${next.level} · ${esc(next.name)}` : ""}</p>
     </section>`;
   }
 
@@ -43,6 +45,7 @@
       <ul>
         <li>Tap a section of the Makerspace to read about it, or spin the wheel for a surprise.</li>
         <li>Win its mini-game to earn the badge.</li>
+        <li>New sections unlock each time you come back on a different day — or scan the QR code in an area to unlock it right away.</li>
         <li>Collect all ${badgeCount().total} badges to earn your Maker Pass.</li>
       </ul>
       <button class="btn" data-act="intro-ok">Got it</button>
@@ -50,11 +53,11 @@
   }
 
   function stationRow(s) {
-    const done = MS.save.has(s.id);
-    return `<button class="station" data-go="${esc(s.id)}" style="--c:${esc(s.color)}">
+    const done = MS.save.has(s.id), locked = s.game && !MS.save.canPlay(s);
+    return `<button class="station${locked ? " locked" : ""}" data-go="${esc(s.id)}" style="--c:${esc(s.color)}">
       <img src="${photo(s.photo)}" alt="" loading="lazy">
       <span class="st-text"><b>${s.badge ? s.badge.icon + " " : ""}${esc(s.name)}</b><small>${esc(s.blurb)}</small></span>
-      <span class="st-status">${done ? "✅" : "›"}</span>
+      <span class="st-status">${done ? "✅" : locked ? "🔒" : "›"}</span>
     </button>`;
   }
 
@@ -63,8 +66,13 @@
     const actions = got === total
       ? `<button class="btn primary" data-go="pass">🏆 Get my Maker Pass</button>`
       : `<button class="btn primary" data-go="wheel">🎲 Spin the Maker Wheel</button>`;
-    return hero() + intro() + (MS.save.state.name ? actions : "") +
-      `<h2>Sections</h2>` + MS.data.stations.map(stationRow).join("") + footer();
+    const reached = MS.save.level().level;
+    const levels = S.levels.map((l) =>
+      `<h2>Level ${l.level} · ${esc(l.name)}${reached >= l.level ? "" : ` <small>🔒 visit ${l.visits}</small>`}</h2>` +
+      MS.data.stations.filter((s) => s.level === l.level).map(stationRow).join("")).join("");
+    const extra = MS.data.stations.filter((s) => !s.level);
+    return hero() + intro() + (MS.save.state.name ? actions : "") + levels +
+      (extra.length ? `<h2>More to see</h2>` + extra.map(stationRow).join("") : "") + footer();
   }
 
   function detail(s, scanned) {
@@ -77,8 +85,11 @@
       <h1>${s.badge ? s.badge.icon + " " : ""}${esc(s.name)}${done ? " ✅" : ""}</h1>
       <p class="blurb">${esc(s.blurb)}</p>
       <ul>${U.resolve(s.facts).map((f) => "<li>" + esc(f) + "</li>").join("")}</ul>
-      ${game ? `<button class="btn primary" data-go="play/${esc(s.id)}">${done ? "↻ Play again" : "▶ Play the mini-game"}</button>
-        <p class="small">Badge: ${s.badge.icon} ${esc(s.badge.name)}</p>` : ""}
+      ${!game ? "" : MS.save.canPlay(s)
+        ? `<button class="btn primary" data-go="play/${esc(s.id)}">${done ? "↻ Play again" : "▶ Play the mini-game"}</button>`
+        : `<button class="btn" disabled>🔒 Mini-game unlocks at Level ${s.level}</button>
+          <p class="small">Come back on another day to level up — or scan the QR code in this area to unlock it now.</p>`}
+      ${game ? `<p class="small">Badge: ${s.badge.icon} ${esc(s.badge.name)}</p>` : ""}
     </article>`;
   }
 

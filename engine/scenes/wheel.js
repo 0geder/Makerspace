@@ -19,7 +19,16 @@
 
   function spin() {
     if (spinning) return;
-    let pool = S.wheel.skipCompleted ? segs.filter((s) => !MS.save.has(s.id)) : segs;
+    let pool = (S.wheel.skipCompleted ? segs.filter((s) => !MS.save.has(s.id)) : segs).filter(MS.save.canPlay);
+    const next = MS.save.nextLevel();
+    if (!pool.length && next && !MS.save.allDone()) {
+      MS.ui.card({
+        title: "🔒 That's everything unlocked so far!",
+        blurb: "Come back on another day to reach Level " + next.level + " · " + next.name + " and unlock new sections. Or scan the QR code in any area to unlock it now.",
+        buttons: [{ label: "Back", onClick: () => MS.back() }],
+      });
+      return;
+    }
     if (!pool.length) {
       MS.ui.card({
         title: "🏆 The wheel is done with you!",
@@ -84,12 +93,12 @@
       segs.forEach((s, i) => {
         const a0 = (i / n) * Math.PI * 2, a1 = ((i + 1) / n) * Math.PI * 2;
         const done = MS.save.has(s.id);
-        g.fillStyle = done ? "#5b6170" : s.color;
+        g.fillStyle = done ? "#5b6170" : MS.save.canPlay(s) ? s.color : "#3a4256";
         g.beginPath(); g.moveTo(0, 0); g.arc(0, 0, R, a0, a1); g.closePath(); g.fill();
         g.strokeStyle = "#fff"; g.lineWidth = 3; g.stroke();
         g.save(); g.rotate((a0 + a1) / 2);
         D.text(g, s.badge.icon, R - 28, 8, { size: 22, emoji: true, align: "center" });
-        D.text(g, (done ? "✓ " : "") + s.name, R - 48, 4, { size: 11, bold: true, align: "right" });
+        D.text(g, (done ? "✓ " : MS.save.canPlay(s) ? "" : "🔒 ") + s.name, R - 48, 4, { size: 11, bold: true, align: "right" });
         g.restore();
       });
       g.restore();

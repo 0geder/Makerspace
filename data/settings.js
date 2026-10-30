@@ -20,6 +20,14 @@ MS.data.settings = {
     skipCompleted: true,   // the wheel only lands on sections you haven't finished
   },
 
+  // Levels unlock by how often you come back: `visits` = different days you've opened the game.
+  // Each station in data/stations.js has a `level`. Scanning a station's QR code unlocks it early.
+  levels: [
+    { level: 1, name: "Newcomer", visits: 1 },
+    { level: 2, name: "Member",   visits: 2 },
+    { level: 3, name: "Maker",    visits: 4 },
+  ],
+
   // Default pass mark for mini-games that score (0..1). Each game data file can override.
   passMark: 0.7,
 

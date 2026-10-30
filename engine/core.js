@@ -73,11 +73,11 @@
       E.routed = location.hash;
       const [view, id] = decodeURIComponent(location.hash.slice(1)).split("/");
       const st = MS.data.stations.find((s) => s.id === (view === "play" ? id : view));
-      if (view === "play" && st && st.game && MS.games[st.game]) E.setScene("minigame", { station: st });
+      if (view === "play" && st && st.game && MS.games[st.game] && MS.save.canPlay(st)) E.setScene("minigame", { station: st });
       else if (view === "wheel") E.setScene("wheel");
       else if (view === "pass") E.setScene("finale");
       // the first view of a page load that lands on a station = a QR code in that area was scanned
-      else E.setScene("home", { station: st, scanned: !!st && !E.routedBefore });
+      else E.setScene("home", { station: st, scanned: !!st && view === st.id && !E.routedBefore });
       E.routedBefore = true;
     },
 

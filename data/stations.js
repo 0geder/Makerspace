@@ -10,6 +10,7 @@
 //    facts   bullet points on the info card (array, or a function returning an array
 //            so it can read live values from data/makerspace.js)
 //    badge   {icon, name} earned when the mini-game is won
+//    level   which level unlocks its mini-game (see `levels` in data/settings.js)
 //
 //  Add / remove stations here — the home screen, wheel and badge count update automatically.
 // =====================================================================
@@ -19,6 +20,7 @@
   MS.data.stations = [
     {
       id: "entrance",
+      level: 1,
       name: "Entrance & Check-in",
       color: "#e2583e",
       game: "checkin",
@@ -33,6 +35,7 @@
     },
     {
       id: "values",
+      level: 1,
       name: "Values Whiteboard",
       color: "#4caf50",
       game: "values",
@@ -47,6 +50,7 @@
     },
     {
       id: "community",
+      level: 1,
       name: "Community Area",
       color: "#f2c230",
       game: "hours",
@@ -62,6 +66,7 @@
     },
     {
       id: "tools",
+      level: 2,
       name: "Hand-Tool Bench",
       color: "#c0392b",
       game: "tools",
@@ -90,6 +95,7 @@
     },
     {
       id: "craft",
+      level: 2,
       name: "Craft & Print Bench",
       color: "#16a085",
       game: "craft",
@@ -105,6 +111,7 @@
     },
     {
       id: "printing",
+      level: 3,
       name: "3D Printing Room",
       color: "#2f80ed",
       game: "printing",
@@ -120,6 +127,7 @@
     },
     {
       id: "laser",
+      level: 3,
       name: "Laser Room",
       color: "#8e44ad",
       game: "laser",
@@ -135,6 +143,7 @@
     },
     {
       id: "recycling",
+      level: 2,
       name: "Recycling Corner",
       color: "#27ae60",
       game: "recycling",
@@ -149,6 +158,7 @@
     },
     {
       id: "ideas",
+      level: 3,
       name: "Idea Lab Desk",
       color: "#e67e22",
       game: "ideas",
