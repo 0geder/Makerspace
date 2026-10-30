@@ -67,11 +67,12 @@
       `<h2>Sections</h2>` + MS.data.stations.map(stationRow).join("") + footer();
   }
 
-  function detail(s) {
+  function detail(s, scanned) {
     const done = MS.save.has(s.id);
     const game = s.game && MS.games[s.game];
     return `<article class="detail" style="--c:${esc(s.color)}">
       <button class="back" data-act="back">← All sections</button>
+      ${scanned ? `<p class="here">📍 You're at the ${esc(s.name)}. Have a look around while you read!</p>` : ""}
       <img class="detail-photo" src="${photo(s.photo)}" alt="">
       <h1>${s.badge ? s.badge.icon + " " : ""}${esc(s.name)}${done ? " ✅" : ""}</h1>
       <p class="blurb">${esc(s.blurb)}</p>
@@ -88,9 +89,9 @@
     </footer>`;
   }
 
-  let current = null;
+  let current = null, scanned = false;
   function render() {
-    root().innerHTML = current ? detail(current) : list();
+    root().innerHTML = current ? detail(current, scanned) : list();
     window.scrollTo(0, current ? 0 : listScroll);
   }
 
@@ -121,6 +122,8 @@
     html: true,
     enter(p) {
       current = p.station || null;
+      scanned = !!p.scanned;
+      if (scanned) MS.save.scan(current.id);
       const el = root();
       el.onclick = onClick;
       el.onsubmit = onSubmit;

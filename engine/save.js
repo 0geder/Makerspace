@@ -1,7 +1,7 @@
 // Save: progress stored in the browser. Works (without saving) if storage is blocked.
 (function () {
   const KEY = "makerspace-quest-v1";
-  const blank = () => ({ name: "", badges: {}, introSeen: false });
+  const blank = () => ({ name: "", badges: {}, introSeen: false, scanned: {} });
 
   let state = blank();
   try {
@@ -17,6 +17,7 @@
     get state() { return state; },
     set(field, value) { state[field] = value; write(); },
     award(stationId) { state.badges[stationId] = true; write(); },
+    scan(stationId) { state.scanned[stationId] = true; write(); },
     has: (stationId) => !!state.badges[stationId],
     reset() { state = blank(); write(); },
 

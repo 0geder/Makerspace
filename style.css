@@ -88,6 +88,7 @@ body.in-game #home, body:not(.in-game) #stage { display: none; }
 .st-status { font-size: 20px; color: var(--muted); }
 .back, .link { background: none; border: 0; padding: 10px 0; color: var(--muted); font-size: 15px; }
 .detail-photo { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 16px; border-bottom: 5px solid var(--c); }
+.here { background: var(--c); color: #fff; font-weight: 700; padding: 10px 14px; border-radius: 12px; }
 footer { display: flex; justify-content: space-between; margin-top: 24px; }
 
 /* Maker Pass certificate */

@@ -76,7 +76,9 @@
       if (view === "play" && st && st.game && MS.games[st.game]) E.setScene("minigame", { station: st });
       else if (view === "wheel") E.setScene("wheel");
       else if (view === "pass") E.setScene("finale");
-      else E.setScene("home", { station: st });
+      // the first view of a page load that lands on a station = a QR code in that area was scanned
+      else E.setScene("home", { station: st, scanned: !!st && !E.routedBefore });
+      E.routedBefore = true;
     },
 
     start() {
