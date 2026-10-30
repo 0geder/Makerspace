@@ -1,7 +1,7 @@
 // Save: progress stored in the browser. Works (without saving) if storage is blocked.
 (function () {
   const KEY = "makerspace-quest-v1";
-  const blank = () => ({ name: "", badges: {}, introSeen: false, scanned: {}, days: [] });
+  const blank = () => ({ name: "", badges: {}, introSeen: false, scanned: {}, days: [], daily: null, streak: 0, goal: null });
 
   let state = blank();
   try {
@@ -21,6 +21,14 @@
     has: (stationId) => !!state.badges[stationId],
     // keeps the visit history: starting over shouldn't re-lock levels you came back for
     reset() { state = Object.assign(blank(), { days: state.days }); write(); },
+
+    // daily challenge: one answer per day; the streak counts right answers in a row (gaps between visits are fine)
+    answerDaily(date, ok) {
+      state.daily = { day: MS.save.dayKey(date), ok };
+      state.streak = ok ? state.streak + 1 : 0;
+      write();
+    },
+    dailyDone: (date) => !!state.daily && state.daily.day === MS.save.dayKey(date),
 
     // --- visits & levels. A visit = a calendar day (local time) the game was opened.
     dayKey: (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"),

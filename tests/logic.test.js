@@ -8,7 +8,8 @@ function boot(saved) {
   const ctx = { console, localStorage: { getItem: (k) => store[k] || null, setItem: (k, v) => (store[k] = v) } };
   ctx.window = ctx;
   vm.createContext(ctx);
-  for (const f of ["data/settings.js", "data/makerspace.js", "data/stations.js", "engine/save.js"]) {
+  const games = fs.readdirSync(path.join(__dirname, "..", "data/games")).filter((f) => f.endsWith(".js")).map((f) => "data/games/" + f);
+  for (const f of ["data/settings.js", "data/makerspace.js", "data/stations.js", ...games, "engine/core.js", "engine/save.js", "engine/daily.js"]) {
     vm.runInContext(fs.readFileSync(path.join(__dirname, "..", f), "utf8"), ctx, { filename: f });
   }
   return ctx.MS;
@@ -49,4 +50,23 @@ MS = boot({ name: "Old", badges: { tools: true }, target: null, introSeen: true 
 assert.ok(MS.save.has("tools") && MS.save.canPlay(station(MS, "tools")));
 assert.strictEqual(MS.save.visits(), 1);
 
-console.log("ok — save / visit / level logic");
+// daily challenge: same question all day, and every question is answerable
+const day = new Date(2026, 9, 27, 9), later = new Date(2026, 9, 27, 18);
+assert.strictEqual(MS.daily.question(day).q, MS.daily.question(later).q);
+MS.daily.pool().forEach((q) => {
+  assert.ok(q.answer && q.wrong.length >= 1 && !q.wrong.includes(q.answer), q.q);
+  assert.ok(MS.data.stations.some((s) => s.id === q.station), q.station);
+});
+MS.save.answerDaily(day, true); MS.save.answerDaily(new Date(2026, 9, 28), true);
+assert.strictEqual(MS.save.state.streak, 2);
+assert.ok(MS.save.dailyDone(new Date(2026, 9, 28, 20)) && !MS.save.dailyDone(new Date(2026, 9, 29)));
+MS.save.answerDaily(new Date(2026, 9, 29), false);
+assert.strictEqual(MS.save.state.streak, 0);
+
+// today: 27 Oct 2026 is a Tuesday (session + meetup); Saturday points to Monday's session
+const tue = MS.daily.today(day);
+assert.strictEqual(tue.day, "Tuesday");
+assert.ok(tue.sessions.length === 1 && tue.community);
+assert.strictEqual(MS.daily.today(new Date(2026, 9, 31)).next.day, "Monday");
+
+console.log("ok — save / visit / level / daily logic");

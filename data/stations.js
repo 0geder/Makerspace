@@ -11,6 +11,7 @@
 //            so it can read live values from data/makerspace.js)
 //    badge   {icon, name} earned when the mini-game is won
 //    level   which level unlocks its mini-game (see `levels` in data/settings.js)
+//    training  true = its machines need equipment training (the badge is not a licence)
 //
 //  Add / remove stations here — the home screen, wheel and badge count update automatically.
 // =====================================================================
@@ -111,6 +112,7 @@
     },
     {
       id: "printing",
+      training: true,
       level: 3,
       name: "3D Printing Room",
       color: "#2f80ed",
@@ -127,6 +129,7 @@
     },
     {
       id: "laser",
+      training: true,
       level: 3,
       name: "Laser Room",
       color: "#8e44ad",

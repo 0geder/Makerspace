@@ -61,6 +61,53 @@
     </button>`;
   }
 
+  function today() {
+    const t = MS.daily.today(new Date());
+    const lines = t.sessions.map((s) => "👋 " + s.time + " · session with " + s.host);
+    if (t.community) lines.push("🤝 " + t.community.time + " · " + t.community.name);
+    if (!t.sessions.length && t.next) lines.push("Next staffed session: " + t.next.day + " " + t.next.time + " with " + t.next.host);
+    return `<section class="panel">
+      <h2>📅 Today · ${esc(t.day)}</h2>
+      <p class="small">Open ${esc(t.open.days)}, ${esc(t.open.time)}</p>
+      <ul class="plain">${lines.map((l) => "<li>" + esc(l) + "</li>").join("")}</ul>
+    </section>`;
+  }
+
+  function daily() {
+    const now = new Date(), q = MS.daily.question(now), st = MS.save.state;
+    const where = MS.data.stations.find((s) => s.id === q.station);
+    const streak = st.streak ? ` <small>🔥 ${st.streak} in a row</small>` : "";
+    if (!MS.save.dailyDone(now)) {
+      return `<section class="panel">
+        <h2>🧠 Daily challenge${streak}</h2>
+        <p class="q">${esc(q.q)}</p>
+        ${q.choices.map((c, i) => `<button class="btn choice" data-act="daily" data-i="${i}">${esc(c)}</button>`).join("")}
+      </section>`;
+    }
+    return `<section class="panel">
+      <h2>🧠 Daily challenge${streak}</h2>
+      <p class="q">${esc(q.q)}</p>
+      <p>${st.daily.ok ? "✅ Correct!" : "❌ Not quite."} The answer: <b>${esc(q.answer)}</b></p>
+      <button class="link" data-go="${esc(where.id)}">Learn more at the ${esc(where.name)} ›</button>
+      <p class="small">A new question every day you come in.</p>
+    </section>`;
+  }
+
+  function path() {
+    const goal = MS.data.goals.find((g) => g.id === MS.save.state.goal);
+    if (!goal) {
+      return `<section class="panel">
+        <h2>🎯 What do you want to make?</h2>
+        ${MS.data.goals.map((g) => `<button class="btn choice" data-act="goal" data-id="${esc(g.id)}">${g.icon} ${esc(g.label)}</button>`).join("")}
+      </section>`;
+    }
+    const stations = goal.stations.map((id) => MS.data.stations.find((s) => s.id === id)).filter(Boolean);
+    const training = stations.some((s) => s.training);
+    return `<h2>🎯 Your path: ${goal.icon} ${esc(goal.label)}</h2>` + stations.map(stationRow).join("") +
+      (training ? `<p class="small">Next step for the machines: ${esc(M.howItWorks[1])}.</p>` : "") +
+      `<button class="link" data-act="goal" data-id="">Change my goal</button>`;
+  }
+
   function list() {
     const { got, total } = badgeCount();
     const actions = got === total
@@ -71,7 +118,8 @@
       `<h2>Level ${l.level} · ${esc(l.name)}${reached >= l.level ? "" : ` <small>🔒 visit ${l.visits}</small>`}</h2>` +
       MS.data.stations.filter((s) => s.level === l.level).map(stationRow).join("")).join("");
     const extra = MS.data.stations.filter((s) => !s.level);
-    return hero() + intro() + (MS.save.state.name ? actions : "") + levels +
+    const named = !!MS.save.state.name;
+    return hero() + intro() + (named ? today() + daily() + path() + actions : "") + levels +
       (extra.length ? `<h2>More to see</h2>` + extra.map(stationRow).join("") : "") + footer();
   }
 
@@ -118,6 +166,13 @@
     const act = b.dataset.act;
     if (act === "back") MS.back();
     if (act === "intro-ok") { MS.save.set("introSeen", true); render(); }
+    if (act === "goal") { MS.save.set("goal", b.dataset.id || null); render(); }
+    if (act === "daily") {
+      const now = new Date(), q = MS.daily.question(now), ok = q.choices[b.dataset.i] === q.answer;
+      MS.audio.play(ok ? "good" : "bad");
+      MS.save.answerDaily(now, ok);
+      render();
+    }
     if (act === "sound") { MS.audio.toggle(); render(); }
     if (act === "reset" && confirm("Delete all your badges and start over?")) { MS.save.reset(); render(); }
   }
