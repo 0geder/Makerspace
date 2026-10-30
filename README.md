@@ -1,17 +1,53 @@
 # Makerspace
 This is an onboarding game to the Makerspace lab
 
-A 2D onboarding game for new members of the Makerspace (HPI d-school Afrika).
-Walk around a map of the real space, spin the **Maker Wheel**, and win a mini-game in every
-section. Collect all 9 badges to earn your printable **Maker Pass**. By then you know the
-values, the opening hours, the machines and the safety rules.
+A phone-first onboarding game for members of the Makerspace (HPI d-school Afrika).
+Members scan a QR code, browse the sections of the real space, and win a mini-game in each
+one to collect 9 badges and earn their **Maker Pass**. New sections unlock each time they
+come back, and a daily challenge gives them a reason to open it on every visit.
 
 ## Play
 
-- **Double-click `index.html`.** No install, no server, no internet needed.
-- Or host it free on **GitHub Pages**: repo → *Settings → Pages → Deploy from branch → `main` / root*.
-- Controls: **WASD / arrows** or **click** to walk · **E / Space** to interact · **Esc** to leave a mini-game · **M** to mute.
-- Progress saves automatically in the browser.
+- **Phones need a hosted link.** Host it free on **GitHub Pages**: repo → *Settings → Pages →
+  Deploy from branch → `main` / root*. A QR code can't open a file on a laptop.
+- On a computer you can also just double-click `index.html`. No install, no server, no internet.
+- Tap (or click) everything. Desktop extras: **Esc** leaves a mini-game, **M** mutes, arrow keys
+  work in the action games.
+- Progress saves automatically in the browser on that phone.
+
+## What members see
+
+- **Home**: today's staffed session and meetup, a daily one-question challenge (with a 🔥 streak),
+  "What do you want to make?" (picks a personal path of sections), the Maker Wheel for a
+  random pick, and every section grouped by level.
+- **Levels by visits**: a visit is a different calendar day the game is opened.
+  Level 1 *Newcomer* (visit 1) → Level 2 *Member* (visit 2) → Level 3 *Maker* (visit 4).
+  Locked sections still show their info and safety facts; only the mini-game waits.
+- **QR codes in the space** open that section full screen and unlock it straight away.
+- **Machine badges** (3D printing, laser) say clearly that a badge is not machine training.
+
+## QR codes for each area
+
+Each section has its own link: your Pages URL plus `#` and the station `id` from
+`data/stations.js`. Put each one into any QR-code generator and stick it in that area,
+e.g. next to the machine usage QR.
+
+| Area | Link |
+|---|---|
+| Entrance & Check-in | `https://<your-pages-url>/#entrance` |
+| Values Whiteboard | `https://<your-pages-url>/#values` |
+| Community Area | `https://<your-pages-url>/#community` |
+| Hand-Tool Bench | `https://<your-pages-url>/#tools` |
+| Showcase Shelf | `https://<your-pages-url>/#showcase` |
+| Craft & Print Bench | `https://<your-pages-url>/#craft` |
+| 3D Printing Room | `https://<your-pages-url>/#printing` |
+| Laser Room | `https://<your-pages-url>/#laser` |
+| Recycling Corner | `https://<your-pages-url>/#recycling` |
+| Idea Lab Desk | `https://<your-pages-url>/#ideas` |
+| Lockers & Lounge | `https://<your-pages-url>/#lounge` |
+
+The game does **not** replace the official check-in: progress lives only on the member's
+phone, so staff can't see it.
 
 ## The sections & mini-games
 
@@ -34,15 +70,18 @@ values, the opening hours, the machines and the safety rules.
 | I want to change… | Edit this file |
 |---|---|
 | Opening hours, staff names, values, rules, "who / why / what" | `data/makerspace.js` |
-| A section's info card, photo, position on the map, badge | `data/stations.js` |
+| A section's info card, photo, badge, level, "needs training" | `data/stations.js` |
+| The "What do you want to make?" goals | `data/goals.js` |
+| How many visits unlock each level | `levels` in `data/settings.js` |
 | Questions / items / answers of one mini-game | `data/games/<game>.js` |
-| Speeds, colours, pass marks, "must spin the wheel first" | `data/settings.js` |
+| Colours, pass marks, wheel | `data/settings.js` |
 | Photos | drop a `.jpg` into `assets/photos/` and reference its file name |
 
 Values flow through automatically. Change the hours in `data/makerspace.js` and the
-Community Area info card, the hours quiz and the Maker Pass certificate all update.
+Community Area info card, the "Today" card, the hours quiz, the daily challenge and the
+Maker Pass all update. The daily challenge draws its questions from the mini-game data files.
 
-> Tip: set `debug: true` in `data/settings.js` to unlock every mini-game without spinning.
+> Tip: set `debug: true` in `data/settings.js` to unlock every mini-game regardless of level.
 
 ## ➕ Adding a new mini-game
 
@@ -53,14 +92,15 @@ Community Area info card, the hours quiz and the Maker Pass certificate all upda
      create(api) {           // api.data = your data file, api.finish(won, scoreText)
        return {
          update(dt) { /* game logic, call api.finish(true) when won */ },
-         draw(g)    { /* draw with the canvas context g (960×600) */ },
+         draw(g)    { /* draw with the canvas context g (450×800, portrait) */ },
        };
      },
    };
    ```
 3. Add both files to `index.html` (data in section 1, game in section 3).
-4. In `data/stations.js`, set `game: "mygame"` on a station (or add a new station).
-   The wheel, the badge count and the Maker Pass pick it up automatically.
+4. In `data/stations.js`, set `game: "mygame"` and a `level` on a station (or add a new station).
+   The home screen, the wheel, the badge count and the Maker Pass pick it up automatically.
+   Keep the top 56px free: the title and the ✕ button live there.
 
 `engine/quiz.js` gives you a ready-made multiple-choice quiz (`MS.Quiz(questions, opts)`).
 See `games/hours.js` for a 15-line example.
@@ -71,8 +111,10 @@ See `games/hours.js` for a 15-line example.
 index.html          loads everything
 style.css           cards, certificate, print layout
 data/               ← content (edit me)
-engine/             core loop, input, drawing, audio, save, quiz, scenes
+engine/             core loop + URL routing, input, drawing, audio, save, quiz, daily challenge
+engine/scenes/      home (HTML page), minigame, wheel
 games/              one file per mini-game
+tests/              node tests/logic.test.js: checks visits, levels and the daily challenge
 assets/photos/      photos of the real space
 PROMPT.md           the full design brief / build prompt
 ```
