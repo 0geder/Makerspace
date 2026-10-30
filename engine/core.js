@@ -1,4 +1,4 @@
-// Core: utilities, canvas setup, scene manager, main loop.
+// Core: utilities, canvas setup, scene manager, URL routing, main loop.
 (function () {
   const S = MS.data.settings;
 
@@ -59,12 +59,35 @@
       E.sceneName = name;
       E.scene = MS.scenes[name];
       if (!E.scene) throw new Error("Unknown scene: " + name);
+      // html scenes (the home page) scroll like a web page; canvas scenes fill the screen
+      document.body.classList.toggle("in-game", !E.scene.html);
+      if (!E.scene.html) E.resize();
       if (E.scene.enter) E.scene.enter(params || {});
     },
 
-    start(first) {
+    // Every view has a URL hash, so the phone's Back button and QR deep links work:
+    //   #            home          #<station>       that station, big (QR codes use ?at=<station>)
+    //   #play/<id>   its mini-game #wheel           the Maker Wheel     #pass   the Maker Pass
+    route() {
+      if (location.hash === E.routed) return; // popstate + hashchange both fire on Back
+      E.routed = location.hash;
+      const [view, id] = decodeURIComponent(location.hash.slice(1)).split("/");
+      const st = MS.data.stations.find((s) => s.id === (view === "play" ? id : view));
+      if (view === "play" && st && st.game && MS.games[st.game] && MS.save.canPlay(st)) E.setScene("minigame", { station: st });
+      else if (view === "wheel") E.setScene("wheel");
+      else if (view === "pass") E.setScene("home", { pass: true });
+      else E.setScene("home", { station: st, scanned: !!st && st.id === E.scannedAt });
+      E.scannedAt = null;
+    },
+
+    start() {
       E.init();
-      E.setScene(first);
+      // QR codes in the space link to ?at=<station>. Swap it for #<station> so a reload isn't another scan.
+      const at = new URLSearchParams(location.search).get("at");
+      if (at) { E.scannedAt = at; history.replaceState(null, "", location.pathname + "#" + at); }
+      window.addEventListener("hashchange", E.route);
+      window.addEventListener("popstate", E.route);
+      E.route();
       let last = performance.now();
       const loop = (now) => {
         const dt = Math.min(0.05, (now - last) / 1000);
@@ -85,4 +108,13 @@
       requestAnimationFrame(loop);
     },
   });
+
+  // Navigation helpers. Entries we push are marked, so back() only steps back inside the
+  // game; opened straight from a QR code, it goes to `fallback` instead of leaving the site.
+  MS.go = (hash) => { history.pushState({ inApp: true }, "", "#" + hash); E.route(); };
+  MS.back = (fallback) => {
+    if (history.state && history.state.inApp) return history.back();
+    history.replaceState(null, "", "#" + (fallback || ""));
+    E.route();
+  };
 })();

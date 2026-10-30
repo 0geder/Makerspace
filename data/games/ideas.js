@@ -2,7 +2,7 @@
 // ok: true = a good Makerspace project, false = not. `why` is shown after answering.
 MS.data.games.ideas = {
   title: "Should I Make It?",
-  intro: "Ideas arrive at the Idea Lab. Press → / click ✔ if it belongs in the Makerspace, ← / click ✘ if not.",
+  intro: "Ideas arrive at the Idea Lab. Swipe right or tap ✔ if it belongs in the Makerspace, swipe left or tap ✘ if not.",
   passMark: 0.75,
   cards: [
     { text: "A personal project to learn how to design gears.", ok: true,  why: "Personal learning projects — YES!" },

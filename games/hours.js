@@ -2,7 +2,7 @@
 MS.games.hours = {
   create(api) {
     const d = api.data;
-    const quiz = MS.Quiz(MS.util.shuffle(d.questions), { seconds: d.secondsPerQuestion, area: { x: 60, y: 80, w: 840, h: 480 } });
+    const quiz = MS.Quiz(MS.util.shuffle(d.questions), { seconds: d.secondsPerQuestion });
     let finished = false;
     return {
       update(dt) {

@@ -4,10 +4,10 @@ MS.games.values = {
     const D = MS.draw, I = MS.input, U = MS.util, C = MS.data.settings.colors;
     const d = api.data;
     const V = MS.data.makerspace.values;
-    const pos = { makerspace: [520, 225], hpi: [440, 365], dschool: [600, 365] };
-    const R = 130;
+    const pos = { makerspace: [225, 330], hpi: [163, 448], dschool: [287, 448] };
+    const R = 108;
     const circles = V.circles.map((c, i) => {
-      const p = pos[c.id] || [520 + Math.cos(i * 2.1) * 80, 300 + Math.sin(i * 2.1) * 80];
+      const p = pos[c.id] || [225 + Math.cos(i * 2.1) * 70, 400 + Math.sin(i * 2.1) * 70];
       return Object.assign({ x: p[0], y: p[1] }, c);
     });
     const notes = U.shuffle(V.notes).slice(0, Math.min(d.rounds, V.notes.length));
@@ -37,7 +37,7 @@ MS.games.values = {
       },
       draw(g) {
         // board
-        D.rr(g, 270, 60, 670, 520, 10, "#f7f7f2", "#9aa0a6", 6);
+        D.rr(g, 16, 196, 418, 412, 10, "#f7f7f2", "#9aa0a6", 6);
         circles.forEach((c) => {
           const hl = fb && !fb.ok && fb.answer.includes(c.id);
           g.fillStyle = c.color + (hl ? "40" : "14");
@@ -45,21 +45,21 @@ MS.games.values = {
           g.strokeStyle = c.color; g.lineWidth = hl ? 6 : 3; g.stroke();
         });
         D.text(g, circles[0].label, circles[0].x, circles[0].y - R - 8, { size: 20, bold: true, align: "center", color: circles[0].color });
-        if (circles[1]) D.text(g, circles[1].label, circles[1].x - R + 10, circles[1].y + R + 24, { size: 20, bold: true, color: circles[1].color });
-        if (circles[2]) D.text(g, circles[2].label, circles[2].x + R - 10, circles[2].y + R + 24, { size: 20, bold: true, align: "right", color: circles[2].color });
+        if (circles[1]) D.text(g, circles[1].label, circles[1].x - R + 6, circles[1].y + R + 20, { size: 18, bold: true, color: circles[1].color });
+        if (circles[2]) D.text(g, circles[2].label, circles[2].x + R - 6, circles[2].y + R + 20, { size: 18, bold: true, align: "right", color: circles[2].color });
         placed.forEach((p) => { D.rr(g, p.x - 7, p.y - 7, 14, 14, 2, C.yellow); });
 
         // current sticky note
         if (i < notes.length) {
-          g.save(); g.translate(140, 250); g.rotate(-0.05);
-          D.rr(g, -105, -85, 210, 170, 4, "rgba(0,0,0,0.25)");
-          D.rr(g, -110, -90, 210, 170, 4, fb ? (fb.ok ? "#8bd17c" : "#f28b82") : "#f6d84a");
-          D.wrap(g, notes[i].text, -5, -5, 180, { size: 21, bold: true, align: "center", valign: "middle", color: "#2a2a2a" });
+          g.save(); g.translate(225, 126); g.rotate(-0.02);
+          D.rr(g, -165, -48, 340, 100, 4, "rgba(0,0,0,0.25)");
+          D.rr(g, -170, -52, 340, 100, 4, fb ? (fb.ok ? "#8bd17c" : "#f28b82") : "#f6d84a");
+          D.wrap(g, notes[i].text, 0, -2, 310, { size: 20, bold: true, align: "center", valign: "middle", color: "#2a2a2a" });
           g.restore();
         }
-        D.text(g, "Note " + Math.min(i + 1, notes.length) + " / " + notes.length + "   ✔ " + correct, 140, 380, { size: 16, align: "center", color: "#ccd" });
-        D.wrap(g, "Click inside the circle (or overlap) where this value belongs.", 140, 430, 220, { size: 14, align: "center", color: "#aab" });
-        if (fb && !fb.ok) D.wrap(g, "It belongs in: " + label(fb.answer), 140, 500, 220, { size: 16, bold: true, align: "center", color: C.yellow });
+        D.text(g, "Note " + Math.min(i + 1, notes.length) + " / " + notes.length + "   ✔ " + correct, 225, 640, { size: 16, align: "center", color: "#ccd" });
+        if (fb && !fb.ok) D.wrap(g, "It belongs in: " + label(fb.answer), 225, 690, 400, { size: 18, bold: true, align: "center", color: C.yellow });
+        else D.wrap(g, "Tap inside the circle (or overlap) where this value belongs.", 225, 690, 400, { size: 15, align: "center", color: "#aab" });
       },
     };
   },

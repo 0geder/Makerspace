@@ -1,12 +1,12 @@
 // Mini-game content: LASER — "Material catcher"
-// Sheets fall from the top. Move the laser bed (←/→ or mouse) to catch SAFE ones.
+// Sheets fall from the top. Move the laser bed (drag / tap, or ←/→) to catch SAFE ones.
 // Catching an UNSAFE one costs a life and shows the `why`.
 MS.data.games.laser = {
   title: "Laser-Safe Materials",
-  intro: "Move the laser bed with ← → (or your mouse). Catch materials that are SAFE to laser. Dodge the dangerous ones!",
+  intro: "Drag your finger to move the laser bed. Catch materials that are SAFE to laser. Dodge the dangerous ones!",
   catchesToWin: 10,
   lives: 3,
-  fallSpeed: 140,
+  fallSpeed: 150,     // pixels per second
   spawnEvery: 0.9,  // seconds
   materials: [
     { name: "Plywood",          safe: true,  color: "#d9b77e" },

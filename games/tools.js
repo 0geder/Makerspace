@@ -4,11 +4,11 @@ MS.games.tools = {
     const D = MS.draw, I = MS.input, U = MS.util, C = MS.data.settings.colors;
     const d = api.data;
     const holes = [];
-    for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) holes.push({ x: 190 + c * 200, y: 170 + r * 135, tool: null, t: 0, age: 0, flash: 0 });
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) holes.push({ x: 22 + c * 140, y: 230 + r * 180, tool: null, t: 0, age: 0, flash: 0 });
     let task = U.pick(d.tools), hits = 0, lives = d.lives, spawn = 0;
 
     const newTask = () => { let n; do { n = U.pick(d.tools); } while (n === task && d.tools.length > 1); task = n; };
-    const rect = (h) => ({ x: h.x, y: h.y, w: 180, h: 115 });
+    const rect = (h) => ({ x: h.x, y: h.y, w: 126, h: 140 });
 
     return {
       update(dt) {
@@ -38,26 +38,26 @@ MS.games.tools = {
         });
       },
       draw(g) {
-        D.rr(g, 150, 60, 660, 60, 12, "#2a3142");
-        D.text(g, "TASK:", 170, 97, { size: 16, bold: true, color: "#aab" });
-        D.text(g, task.task, 230, 97, { size: 21, bold: true, color: C.yellow });
-        D.hearts(g, 830, 90, lives, d.lives);
-        D.text(g, "🎯 " + hits + " / " + d.targetHits, 30, 97, { size: 18, bold: true });
+        D.rr(g, 16, 68, 418, 100, 12, "#2a3142");
+        D.text(g, "TASK", 225, 92, { size: 13, bold: true, align: "center", color: "#aab" });
+        D.wrap(g, task.task, 225, 132, 396, { size: 20, bold: true, align: "center", valign: "middle", color: C.yellow });
+        D.text(g, "🎯 " + hits + " / " + d.targetHits, 16, 200, { size: 18, bold: true });
+        D.hearts(g, 358, 200, lives, d.lives);
         // pegboard
-        D.rr(g, 170, 150, 620, 430, 10, C.wood);
+        D.rr(g, 16, 214, 418, 560, 10, C.wood);
         g.fillStyle = "#a07c45";
-        for (let x = 185; x < 780; x += 22) for (let y = 160; y < 575; y += 22) g.fillRect(x, y, 3, 3);
+        for (let x = 28; x < 428; x += 22) for (let y = 224; y < 768; y += 22) g.fillRect(x, y, 3, 3);
         holes.forEach((h) => {
           g.fillStyle = "#4a3520";
-          g.beginPath(); g.ellipse(h.x + 90, h.y + 100, 70, 14, 0, 0, 7); g.fill();
+          g.beginPath(); g.ellipse(h.x + 63, h.y + 138, 54, 12, 0, 0, 7); g.fill();
           if (!h.tool) return;
           const pop = Math.min(1, h.age * 7);
-          const y = h.y + (1 - pop) * 60;
+          const y = h.y + 12 + (1 - pop) * 70;
           g.save();
-          g.beginPath(); g.rect(h.x - 10, h.y - 20, 200, 122); g.clip();
-          D.rr(g, h.x + 15, y, 150, 100, 12, h.flash ? C.bad : MS.input.hover(rect(h)) ? "#fff" : "#f3efe6", "#7a4a2a", 3);
-          D.text(g, h.tool.icon, h.x + 90, y + 55, { size: 44, emoji: true, align: "center" });
-          D.text(g, h.tool.name, h.x + 90, y + 88, { size: 14, bold: true, align: "center", color: "#333" });
+          g.beginPath(); g.rect(h.x - 6, h.y - 10, 138, 148); g.clip();
+          D.rr(g, h.x + 3, y, 120, 120, 12, h.flash ? C.bad : MS.input.hover(rect(h)) ? "#fff" : "#f3efe6", "#7a4a2a", 3);
+          D.text(g, h.tool.icon, h.x + 63, y + 62, { size: 40, emoji: true, align: "center" });
+          D.wrap(g, h.tool.name, h.x + 63, y + 98, 112, { size: 13, bold: true, align: "center", valign: "middle", color: "#333" });
           g.restore();
         });
       },

@@ -1,5 +1,5 @@
 // Mini-game content: TOOLS — "Whack-a-tool"
-// Tools pop out of the pegboard. A task is shown; click the right tool.
+// Tools pop out of the pegboard. A task is shown; tap the right tool.
 //   icon   emoji drawn on the board (swap for an image later if you like)
 //   task   the job this tool is the right choice for
 MS.data.games.tools = {

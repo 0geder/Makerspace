@@ -10,6 +10,7 @@
   const C = MS.data.settings.colors;
 
   let st, data, inst, phase, result;
+  const leave = () => MS.back(st.id);
 
   function start() {
     phase = "play";
@@ -26,9 +27,15 @@
   }
 
   function header(g) {
-    g.fillStyle = "rgba(0,0,0,0.25)"; g.fillRect(0, 0, 960, 44);
-    D.text(g, (st.badge ? st.badge.icon + "  " : "") + data.title, 20, 29, { size: 20, bold: true, color: C.yellow });
-    D.text(g, st.name + "  ·  Esc to leave", 940, 28, { size: 13, align: "right", color: "#aab" });
+    g.fillStyle = "rgba(0,0,0,0.25)"; g.fillRect(0, 0, 450, 56);
+    D.text(g, (st.badge ? st.badge.icon + "  " : "") + data.title, 16, 36, { size: 18, bold: true, color: C.yellow });
+    if (D.button(g, { x: 392, y: 8, w: 48, h: 40 }, "✕", { size: 20, color: "#3a4256" })) leave();
+  }
+
+  // bullet list from y; returns the y below it
+  function bullets(g, items, mark, y) {
+    items.forEach((l) => { y += D.wrap(g, mark + " " + l, 34, y, 382, { size: 15, color: "#e8e8ee" }) + 6; });
+    return y;
   }
 
   MS.scenes.minigame = {
@@ -42,51 +49,51 @@
     },
 
     update(dt) {
-      if (I.pressed("escape")) return MS.engine.setScene("world", { returnFrom: st });
+      if (I.pressed("m")) MS.ui.toast(MS.audio.toggle() ? "🔊 Sound on" : "🔇 Sound off");
+      if (I.pressed("escape")) return leave();
       if (phase === "intro" && I.pressed(" ", "enter")) return start();
       if (phase === "play") inst.update(dt);
     },
 
     draw(g) {
-      g.fillStyle = "#262c3a"; g.fillRect(0, 0, 960, 600);
-      header(g);
+      g.fillStyle = "#262c3a"; g.fillRect(0, 0, 450, 800);
 
       if (phase === "intro") {
-        D.panel(g, 120, 80, 720, 460);
-        D.photo(g, st.photo, 150, 105, 260, 190, 12);
-        D.text(g, data.title, 440, 140, { size: 30, bold: true, color: C.yellow });
-        D.wrap(g, data.intro, 440, 185, 370, { size: 17, color: "#e8e8ee", baseline: "middle" });
-        D.text(g, "You'll learn about:", 150, 335, { size: 16, bold: true, color: "#aab" });
-        let y = 365;
-        (data.learned || []).forEach((l) => { y += D.wrap(g, "• " + l, 150, y, 660, { size: 15, color: "#dde", baseline: "middle" }) + 4; });
-        if (D.button(g, { x: 380, y: 470, w: 200, h: 50 }, "▶  Start", { size: 22, color: C.good })) start();
-        return;
+        D.panel(g, 16, 72, 418, 712);
+        D.photo(g, st.photo, 32, 88, 386, 200, 12);
+        let y = 320;
+        y += D.wrap(g, data.title, 225, y, 386, { size: 26, bold: true, align: "center", color: C.yellow }) + 8;
+        y += D.wrap(g, data.intro, 34, y, 382, { size: 16, color: "#e8e8ee" }) + 18;
+        D.text(g, "You'll learn about:", 34, y, { size: 15, bold: true, color: "#aab" });
+        bullets(g, data.learned || [], "•", y + 28);
+        if (D.button(g, { x: 115, y: 708, w: 220, h: 56 }, "▶  Start", { size: 22, color: C.good })) start();
+        return header(g);
       }
 
-      if (phase === "play") {
-        g.save(); inst.draw(g); g.restore();
-        return;
-      }
+      g.save(); inst.draw(g); g.restore();
+      if (phase === "play") return header(g);
 
       // result
-      g.save(); inst.draw(g); g.restore();
-      g.fillStyle = "rgba(15,18,26,0.75)"; g.fillRect(0, 0, 960, 600);
-      D.panel(g, 140, 70, 680, 470);
+      g.fillStyle = "rgba(15,18,26,0.8)"; g.fillRect(0, 0, 450, 800);
+      D.panel(g, 16, 72, 418, 712);
       const r = result;
-      D.text(g, r.won ? "🎉" : "🔧", 480, 140, { size: 52, emoji: true, align: "center" });
-      D.text(g, r.won ? "Badge earned: " + st.badge.name + "!" : "Not quite — try again!", 480, 195, { size: 28, bold: true, align: "center", color: r.won ? C.good : C.yellow });
-      if (r.scoreText) D.text(g, r.scoreText, 480, 226, { size: 16, align: "center", color: "#ccd" });
-      D.text(g, "What you learned:", 180, 270, { size: 17, bold: true, color: "#aab" });
-      let y = 300;
-      (data.learned || []).forEach((l) => { y += D.wrap(g, "✔ " + l, 180, y, 600, { size: 16, color: "#eef", baseline: "middle" }) + 6; });
+      D.text(g, r.won ? "🎉" : "🔧", 225, 150, { size: 52, emoji: true, align: "center" });
+      let y = 200;
+      y += D.wrap(g, r.won ? "Badge earned: " + st.badge.name + "!" : "Not quite — try again!", 225, y, 386, { size: 24, bold: true, align: "center", color: r.won ? C.good : C.yellow }) + 4;
+      if (r.scoreText) y += D.wrap(g, r.scoreText, 225, y, 386, { size: 15, align: "center", color: "#ccd" });
+      if (r.won && st.training) y += 8 + D.wrap(g, "⚠️ A badge isn't machine training — book a session before using it.", 225, y + 16, 386, { size: 15, bold: true, align: "center", color: C.yellow });
+      D.text(g, "What you learned:", 34, y + 24, { size: 16, bold: true, color: "#aab" });
+      bullets(g, data.learned || [], "✔", y + 54);
 
+      const left = { x: 32, y: 708, w: 186, h: 56 }, right = { x: 232, y: 708, w: 186, h: 56 };
       if (r.won) {
-        if (D.button(g, { x: 290, y: 465, w: 180, h: 50 }, "Back to map", { color: C.good })) MS.engine.setScene("world", { returnFrom: st, justWon: true });
-        if (D.button(g, { x: 490, y: 465, w: 180, h: 50 }, "Play again", { color: "#3a4256" })) start();
+        if (D.button(g, left, "Back", { color: C.good })) leave();
+        if (D.button(g, right, "Play again", { color: "#3a4256" })) start();
       } else {
-        if (D.button(g, { x: 290, y: 465, w: 180, h: 50 }, "Try again", { color: C.accent })) start();
-        if (D.button(g, { x: 490, y: 465, w: 180, h: 50 }, "Back to map", { color: "#3a4256" })) MS.engine.setScene("world", { returnFrom: st });
+        if (D.button(g, left, "Try again", { color: C.accent })) start();
+        if (D.button(g, right, "Back", { color: "#3a4256" })) leave();
       }
+      header(g);
     },
   };
 })();

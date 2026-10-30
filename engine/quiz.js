@@ -9,7 +9,7 @@
 
   MS.Quiz = function (questions, opts) {
     opts = opts || {};
-    const area = opts.area || { x: 60, y: 90, w: 840, h: 480 };
+    const area = opts.area || { x: 16, y: 72, w: 418, h: 700 };
     const qs = questions.map((q) => ({
       q: q.q,
       choices: q.choices
@@ -34,13 +34,13 @@
 
       rects() {
         const n = self.current().choices.length;
-        const top = area.y + 110;
+        const top = area.y + 140;
         if (opts.photos) {
-          const cw = (area.w - 20) / 2, ch = (area.h - 120) / 2;
-          return self.current().choices.map((_, i) => ({ x: area.x + (i % 2) * (cw + 20), y: top + Math.floor(i / 2) * (ch + 10), w: cw, h: ch - 10 }));
+          const cw = (area.w - 12) / 2, ch = (area.h - 162) / 2;
+          return self.current().choices.map((_, i) => ({ x: area.x + (i % 2) * (cw + 12), y: top + Math.floor(i / 2) * (ch + 12), w: cw, h: ch }));
         }
-        const h = Math.min(70, (area.h - 120) / n - 12);
-        return self.current().choices.map((_, i) => ({ x: area.x + 60, y: top + i * (h + 12), w: area.w - 120, h }));
+        const h = Math.min(84, (area.h - 150) / n - 12);
+        return self.current().choices.map((_, i) => ({ x: area.x, y: top + i * (h + 12), w: area.w, h }));
       },
 
       update(dt) {
@@ -66,10 +66,10 @@
       draw(g) {
         if (self.done) return;
         const cur = self.current();
-        D.text(g, "Question " + (self.index + 1) + " / " + qs.length, area.x, area.y, { size: 14, color: "#aab" });
-        D.wrap(g, cur.q, area.x + area.w / 2, area.y + 50, area.w - 40, { size: 24, bold: true, align: "center", valign: "middle" });
+        D.text(g, "Question " + (self.index + 1) + " / " + qs.length, area.x, area.y + 14, { size: 14, color: "#aab" });
+        D.wrap(g, cur.q, area.x + area.w / 2, area.y + 68, area.w - 16, { size: 21, bold: true, align: "center", valign: "middle" });
         if (opts.seconds && self.picked === -1) {
-          D.bar(g, area.x, area.y + 86, area.w, 8, self.timeLeft / opts.seconds, self.timeLeft < 3 ? C.bad : C.yellow);
+          D.bar(g, area.x, area.y + 118, area.w, 8, self.timeLeft / opts.seconds, self.timeLeft < 3 ? C.bad : C.yellow);
         }
         self.rects().forEach((r, i) => {
           const ch = cur.choices[i];
@@ -80,14 +80,14 @@
           }
           D.rr(g, r.x, r.y, r.w, r.h, 12, fill, "rgba(255,255,255,0.2)", 2);
           if (opts.photos && ch.photo) {
-            D.photo(g, ch.photo, r.x + 8, r.y + 8, r.w - 16, r.h - 48, 8);
-            D.text(g, (i + 1) + ". " + ch.label, r.x + r.w / 2, r.y + r.h - 14, { size: 17, bold: true, align: "center" });
+            D.photo(g, ch.photo, r.x + 8, r.y + 8, r.w - 16, r.h - 56, 8);
+            D.wrap(g, ch.label, r.x + r.w / 2, r.y + r.h - 26, r.w - 12, { size: 15, bold: true, align: "center", valign: "middle" });
           } else {
-            D.text(g, String(i + 1), r.x + 22, r.y + r.h / 2, { size: 18, bold: true, color: "#aab", baseline: "middle" });
-            D.wrap(g, ch.label, r.x + r.w / 2, r.y + r.h / 2, r.w - 90, { size: 18, align: "center", valign: "middle" });
+            D.text(g, String(i + 1), r.x + 18, r.y + r.h / 2, { size: 17, bold: true, color: "#aab", baseline: "middle" });
+            D.wrap(g, ch.label, r.x + r.w / 2 + 10, r.y + r.h / 2, r.w - 60, { size: 17, align: "center", valign: "middle" });
           }
         });
-        if (self.picked === -2) D.text(g, "⏰ Time's up!", area.x + area.w / 2, area.y + area.h + 10, { size: 18, bold: true, align: "center", color: C.bad });
+        if (self.picked === -2) D.text(g, "⏰ Time's up!", area.x + area.w / 2, area.y + 126, { size: 18, bold: true, align: "center", color: C.bad });
       },
     };
     return self;
