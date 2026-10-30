@@ -81,6 +81,7 @@
       let y = 200;
       y += D.wrap(g, r.won ? "Badge earned: " + st.badge.name + "!" : "Not quite — try again!", 225, y, 386, { size: 24, bold: true, align: "center", color: r.won ? C.good : C.yellow }) + 4;
       if (r.scoreText) y += D.wrap(g, r.scoreText, 225, y, 386, { size: 15, align: "center", color: "#ccd" });
+      if (r.won && st.training) y += 8 + D.wrap(g, "⚠️ A badge isn't machine training — book a session before using it.", 225, y + 16, 386, { size: 15, bold: true, align: "center", color: C.yellow });
       D.text(g, "What you learned:", 34, y + 24, { size: 16, bold: true, color: "#aab" });
       bullets(g, data.learned || [], "✔", y + 54);
 

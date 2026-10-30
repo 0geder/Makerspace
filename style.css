@@ -99,25 +99,25 @@ body.in-game #home, body:not(.in-game) #stage { display: none; }
 .here { background: var(--c); color: #fff; font-weight: 700; padding: 10px 14px; border-radius: 12px; }
 footer { display: flex; justify-content: space-between; margin-top: 24px; }
 
-/* Maker Pass certificate */
-.pass { color: var(--text); }
+/* Maker Pass */
+.warn { background: rgba(242, 194, 48, 0.12); border-left: 4px solid var(--yellow); padding: 10px 12px; border-radius: 8px; font-size: 14px; }
+.center { text-align: center; }
+.pass { background: var(--ui); border: 2px solid rgba(255,255,255,0.12); border-radius: 18px; padding: 16px 18px; }
 .pass-head { text-align: center; border-bottom: 2px dashed rgba(255,255,255,0.2); padding-bottom: 8px; }
-.pass-title { font-size: 34px; font-weight: 900; letter-spacing: 0.2em; color: var(--yellow); }
+.pass-title { font-size: 28px; font-weight: 900; letter-spacing: 0.15em; color: var(--yellow); }
 .pass-sub { color: var(--muted); }
 .pass-name { font-size: 30px; font-weight: 800; text-align: center; margin: 12px 0 0; }
-.pass .small { text-align: center; }
+.pass h3 { margin: 14px 0 4px; color: var(--yellow); font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
 .badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 10px 0; }
 .badge { background: var(--ui2); border-radius: 999px; padding: 4px 10px; font-size: 13px; font-weight: 700; }
 .badge.missing { opacity: 0.35; }
-.cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-@media (max-width: 700px) { .cols { grid-template-columns: 1fr; } }
 
 @media print {
-  body { background: #fff; overflow: visible; }
-  #game, #home, .card-buttons, .toast { display: none !important; }
-  #stage, #overlay { position: static; transform: none; display: block !important; width: auto !important; height: auto !important; background: none; padding: 0; backdrop-filter: none; }
-  .card { box-shadow: none; border: 3px solid #222; background: #fff; color: #111; width: 100%; max-height: none; }
-  .pass, .card li, .pass-name { color: #111; }
-  .pass-title, .card h3 { color: #b8860b; }
+  body { background: #fff; }
+  #stage, .toast, #home > :not(.pass) { display: none !important; }
+  #home { max-width: none; padding: 0; }
+  .pass { border: 3px solid #222; background: #fff; color: #111; }
+  .pass .small, .pass li { color: #111; }
+  .pass-title, .pass h3 { color: #b8860b; }
   .badge { background: #eee; }
 }

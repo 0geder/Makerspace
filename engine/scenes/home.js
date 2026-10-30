@@ -1,6 +1,7 @@
 // Home scene: the phone-first home page. Plain HTML that scrolls like a web page.
 //   enter({})          → the list of sections
 //   enter({ station }) → that section, big (QR codes in the space land here: index.html#<id>)
+//   enter({ pass })    → the Maker Pass
 (function () {
   const S = MS.data.settings, M = MS.data.makerspace;
   const esc = (s) => MS.ui.esc(s);
@@ -133,12 +134,38 @@
       <h1>${s.badge ? s.badge.icon + " " : ""}${esc(s.name)}${done ? " ✅" : ""}</h1>
       <p class="blurb">${esc(s.blurb)}</p>
       <ul>${U.resolve(s.facts).map((f) => "<li>" + esc(f) + "</li>").join("")}</ul>
+      ${s.training ? `<p class="warn">⚠️ The badge shows you know the basics — it is not machine training. ${esc(M.hours.machineRule)}</p>` : ""}
       ${!game ? "" : MS.save.canPlay(s)
         ? `<button class="btn primary" data-go="play/${esc(s.id)}">${done ? "↻ Play again" : "▶ Play the mini-game"}</button>`
         : `<button class="btn" disabled>🔒 Mini-game unlocks at Level ${s.level}</button>
           <p class="small">Come back on another day to level up — or scan the QR code in this area to unlock it now.</p>`}
       ${game ? `<p class="small">Badge: ${s.badge.icon} ${esc(s.badge.name)}</p>` : ""}
     </article>`;
+  }
+
+  function pass() {
+    const st = MS.save.state, h = M.hours;
+    const ul = (arr) => "<ul>" + arr.map((x) => "<li>" + esc(x) + "</li>").join("") + "</ul>";
+    const badges = MS.save.badgeStations().map((s) =>
+      `<span class="badge${MS.save.has(s.id) ? "" : " missing"}">${s.badge.icon} ${esc(s.badge.name)}</span>`).join("");
+    const date = new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+    const lv = MS.save.level();
+    return `<button class="back" data-act="back">← Back</button>
+      <article class="pass">
+        <div class="pass-head"><div class="pass-title">🏆 MAKER PASS</div><div class="pass-sub">${esc(M.name)} · ${esc(M.host)}</div></div>
+        <p class="pass-name">${esc(st.name)}</p>
+        <p class="small center">${MS.save.allDone() ? "has completed Makerspace onboarding" : "is learning the Makerspace"} · ${esc(date)} · Level ${lv.level} ${esc(lv.name)}</p>
+        <div class="badges">${badges}</div>
+        <p class="small center">Badges aren't machine training. ${esc(h.machineRule)}</p>
+        <h3>Golden rules</h3>${ul(M.golden_rules)}
+        <h3>When</h3>${ul([h.open.days + ", " + h.open.time, ...h.sessions.map((s) => s.day + " " + s.time + " (" + s.host + ")"), h.community.name + ": " + h.community.day + " " + h.community.time])}
+        <h3>How it works</h3>${ul(M.howItWorks)}
+        <h3>Our values</h3>${ul(M.values.notes.filter((n) => n.in.includes("makerspace")).map((n) => n.text))}
+        <h3>Good projects are…</h3><p class="small">${esc(M.shouldIMakeIt.join(" · "))}</p>
+        <p class="small">Still curious? Ask the team: ${esc(M.openQuestions.join(" · "))}</p>
+      </article>
+      <p class="small center">Screenshot your pass or show it to the team.</p>
+      <button class="btn primary" data-act="print">🖨️ Print my Maker Pass</button>`;
   }
 
   function footer() {
@@ -148,10 +175,10 @@
     </footer>`;
   }
 
-  let current = null, scanned = false;
+  let current = null, scanned = false, showPass = false;
   function render() {
-    root().innerHTML = current ? detail(current, scanned) : list();
-    window.scrollTo(0, current ? 0 : listScroll);
+    root().innerHTML = showPass ? pass() : current ? detail(current, scanned) : list();
+    window.scrollTo(0, current || showPass ? 0 : listScroll);
   }
 
   function onClick(e) {
@@ -160,11 +187,12 @@
     MS.audio.unlock();
     MS.audio.play("click");
     if (b.dataset.go) {
-      if (!current) listScroll = window.scrollY;
+      if (!current && !showPass) listScroll = window.scrollY;
       return MS.go(b.dataset.go);
     }
     const act = b.dataset.act;
     if (act === "back") MS.back();
+    if (act === "print") window.print();
     if (act === "intro-ok") { MS.save.set("introSeen", true); render(); }
     if (act === "goal") { MS.save.set("goal", b.dataset.id || null); render(); }
     if (act === "daily") {
@@ -188,6 +216,8 @@
     html: true,
     enter(p) {
       current = p.station || null;
+      showPass = !!p.pass;
+      if (showPass && MS.save.allDone()) MS.audio.play("win");
       scanned = !!p.scanned;
       if (scanned) MS.save.scan(current.id);
       const el = root();
