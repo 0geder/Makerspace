@@ -17,56 +17,65 @@
   // replace the wheel in the history, so Back from the next view goes home
   const swap = (hash) => { history.replaceState(history.state, "", "#" + hash); MS.engine.route(); };
 
+  // Nothing left to spin for: today's run is complete (or the whole game is).
+  function dayComplete() {
+    const next = MS.save.nextLevel(), got = MS.save.badgeStations().filter((s) => MS.save.has(s.id)).length;
+    const total = MS.save.badgeStations().length;
+    MS.audio.play("win");
+    if (MS.save.allDone()) {
+      return MS.ui.card({
+        title: "🏆 Every badge collected!",
+        blurb: "You know the Makerspace inside out. Your Maker Pass is ready.",
+        noEscape: true,
+        buttons: [{ label: "Get my Maker Pass", primary: true, onClick: () => swap("pass") }, { label: "Home", onClick: () => MS.back() }],
+      });
+    }
+    MS.ui.card({
+      title: "🎉 Day " + MS.save.visits() + " complete!",
+      blurb: "You've played everything unlocked today: " + got + " / " + total + " badges, ⭐ " + MS.save.totalStars() + ".",
+      facts: [
+        next ? "Come back on another day to reach Level " + next.level + " · " + next.name + " and unlock new sections." : "Replay any section from the home page to get 3 stars.",
+        "Can't wait? Scan the QR code in any area of the space to unlock it right now.",
+      ],
+      noEscape: true,
+      buttons: [{ label: "Home", primary: true, onClick: () => MS.back() }],
+    });
+  }
+
   function spin() {
     if (spinning) return;
-    let pool = (S.wheel.skipCompleted ? segs.filter((s) => !MS.save.has(s.id)) : segs).filter(MS.save.canPlay);
-    const next = MS.save.nextLevel();
-    if (!pool.length && next && !MS.save.allDone()) {
-      MS.ui.card({
-        title: "🔒 That's everything unlocked so far!",
-        blurb: "Come back on another day to reach Level " + next.level + " · " + next.name + " and unlock new sections. Or scan the QR code in any area to unlock it now.",
-        buttons: [{ label: "Back", onClick: () => MS.back() }],
-      });
-      return;
-    }
-    if (!pool.length) {
-      MS.ui.card({
-        title: "🏆 The wheel is done with you!",
-        blurb: "You've completed every section.",
-        buttons: [{ label: "Get my Maker Pass", primary: true, onClick: () => swap("pass") }, { label: "Back", onClick: () => MS.back() }],
-      });
-      return;
-    }
+    const pool = (S.wheel.skipCompleted ? segs.filter((s) => !MS.save.has(s.id)) : segs).filter(MS.save.canPlay);
+    if (!pool.length) return dayComplete();
     chosen = U.pick(pool);
     const i = segs.indexOf(chosen), n = segs.length;
     const segCenter = ((i + 0.5) / n) * Math.PI * 2 + U.rand(-0.35, 0.35) * (Math.PI * 2 / n);
     from = rot;
     let target = -Math.PI / 2 - segCenter;
-    while (target < from + Math.PI * 2 * 5) target += Math.PI * 2;
-    to = target; t = 0; spinning = true;
+    while (target < from + Math.PI * 2 * 3) target += Math.PI * 2;
+    to = target; t = 0; spinning = true; landedFor = -1;
   }
 
+  // landed: show where for a moment, then straight into the game
   function landed() {
     spinning = false;
+    landedFor = 0;
     MS.audio.play("win");
-    MS.ui.card({
-      title: "🎯 " + chosen.name + "!",
-      photo: chosen.photo,
-      blurb: chosen.blurb + " Read up on it, then play its mini-game.",
-      buttons: [
-        { label: "▶ Play now", primary: true, onClick: () => swap("play/" + chosen.id) },
-        { label: "Tell me more", onClick: () => swap(chosen.id) },
-      ],
-    });
+    MS.fx.burst(CX, CY - R - 10, chosen.color, 24);
   }
+
+  let landedFor = -1, autoIn = 0;
 
   MS.scenes.wheel = {
     enter() {
       segs = MS.save.badgeStations();
-      spinning = false; chosen = null;
+      spinning = false; chosen = null; landedFor = -1;
+      autoIn = 0.25; // spins by itself, a beat after it appears
+      MS.fx.reset();
     },
     update(dt) {
+      MS.fx.update(dt);
       if (MS.ui.isOpen()) return;
+      if (autoIn > 0) { autoIn -= dt; if (autoIn <= 0) spin(); }
       if (spinning) {
         t += dt / S.wheel.spinSeconds;
         const e = 1 - Math.pow(1 - Math.min(1, t), 3);
@@ -74,6 +83,9 @@
         const s = segAt(rot);
         if (s !== lastSeg) { lastSeg = s; MS.audio.play("tick"); }
         if (t >= 1) landed();
+      } else if (landedFor >= 0) {
+        landedFor += dt;
+        if (landedFor >= S.wheel.landPause || I.mouse.clicked || I.pressed(" ", "enter")) { landedFor = -1; swap("play/" + chosen.id); }
       } else {
         if (I.pressed(" ", "enter", "e")) spin();
         if (I.pressed("escape")) MS.back();
@@ -86,7 +98,14 @@
       for (let i = 0; i < 16; i++) { g.rotate(Math.PI / 8); g.fillStyle = i % 2 ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.06)"; g.beginPath(); g.moveTo(0, 0); g.lineTo(700, -90); g.lineTo(700, 90); g.fill(); }
       g.restore();
 
-      D.text(g, "Spin the Maker Wheel!", CX, 110, { size: 28, bold: true, align: "center", color: C.yellow, shadow: "rgba(0,0,0,0.4)" });
+      if (landedFor >= 0) {
+        const pop = Math.min(1, landedFor * 6);
+        D.rr(g, 225 - 190 * pop, 70, 380 * pop, 64, 32, chosen.color, "#fff", 3);
+        if (pop > 0.9) D.text(g, "🎯 " + chosen.name + "!", CX, 112, { size: 26, bold: true, align: "center", shadow: "rgba(0,0,0,0.35)" });
+      } else {
+        D.text(g, spinning ? "Spinning…" : "Spin the Maker Wheel!", CX, 110, { size: 28, bold: true, align: "center", color: C.yellow, shadow: "rgba(0,0,0,0.4)" });
+      }
+      D.text(g, "⭐ " + MS.save.totalStars() + "   🏅 " + segs.filter((s) => MS.save.has(s.id)).length + " / " + segs.length, CX, 160, { size: 16, bold: true, align: "center", color: "#ccd" });
 
       const n = segs.length;
       g.save(); g.translate(CX, CY); g.rotate(rot);
@@ -112,12 +131,20 @@
       g.fillStyle = C.accent; g.strokeStyle = "#fff"; g.lineWidth = 3;
       g.beginPath(); g.moveTo(CX - 18, CY - R - 30); g.lineTo(CX + 18, CY - R - 30); g.lineTo(CX, CY - R + 8); g.closePath(); g.fill(); g.stroke();
 
-      if (!spinning && !MS.ui.isOpen()) {
+      // your character, watching the wheel
+      const me = MS.save.avatar();
+      const pose = landedFor >= 0 ? MS.sprites.cheer(landedFor) : spinning ? "show" : "idle";
+      MS.sprites.draw(g, me, pose, 340, 790, { h: 170 });
+
+      const idle = !spinning && landedFor < 0 && autoIn <= 0 && !MS.ui.isOpen();
+      if (idle) {
         if (D.button(g, { x: CX - 50, y: CY - 50, w: 100, h: 100 }, "SPIN", { size: 24, color: C.accent })) spin();
-        if (D.button(g, { x: 16, y: 724, w: 140, h: 52 }, "← Back", { size: 17, color: "#3a4256" })) MS.back();
       } else {
         D.rr(g, CX - 40, CY - 40, 80, 80, 40, "#1f2430", "#fff", 4);
+        if (chosen && landedFor >= 0) D.text(g, chosen.badge.icon, CX, CY + 14, { size: 38, emoji: true, align: "center" });
       }
+      if (!MS.ui.isOpen() && D.button(g, { x: 16, y: 724, w: 140, h: 52 }, "← Home", { size: 17, color: "#3a4256" })) MS.back();
+      MS.fx.draw(g);
     },
   };
 })();

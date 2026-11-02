@@ -1,16 +1,17 @@
-// Mini-game content: RECYCLING — "Sort it"
-// Items appear one by one; tap (or press 1–4) the right destination.
+// Mini-game content: RECYCLING — "Bin It"
+// Items appear one by one; tap the right bin before time runs out.
+//   bins[].pop   what the guide says when something goes in that bin correctly
 MS.data.games.recycling = {
-  title: "Sort It Out",
-  intro: "Waste is material in the wrong place. Tap the right bin for each item before time runs out.",
-  secondsPerItem: 6,
-  rounds: 12,
-  passMark: 0.75,
+  title: "Bin It",
+  howTo: "Tap the right bin for each item. Quick!",
+  secondsPerItem: 4,
+  rounds: 6,
+  passMark: 0.6,
   bins: [
-    { id: "recycle",  label: "Recyclable",      color: "#2e7d32", icon: "♻️" },
-    { id: "general",  label: "Non-recyclable",  color: "#f2c230", icon: "🗑️" },
-    { id: "filament", label: "Filament recycling", color: "#2f80ed", icon: "🧵" },
-    { id: "offcuts",  label: "Offcut box",       color: "#d9b77e", icon: "🪵" },
+    { id: "recycle",  label: "Recyclable",         color: "#2e7d32", icon: "♻️", pop: "Clean paper, card, cans and bottles get recycled." },
+    { id: "general",  label: "Non-recyclable",     color: "#f2c230", icon: "🗑️", pop: "Tape, glue and dirty packaging can't be recycled." },
+    { id: "filament", label: "Filament recycling", color: "#2f80ed", icon: "🧵", pop: "Shredded and turned back into new filament!" },
+    { id: "offcuts",  label: "Offcut box",         color: "#d9b77e", icon: "🪵", pop: "Usable scraps go to the offcut box for the next maker." },
   ],
   items: [
     { name: "Failed PLA print",          icon: "🧊", bin: "filament" },
@@ -28,9 +29,5 @@ MS.data.games.recycling = {
     { name: "Chip packet",               icon: "🍟", bin: "general" },
     { name: "Sanding dust",              icon: "💨", bin: "general" },
   ],
-  learned: [
-    "Failed prints & filament scraps → shredded and turned into new filament.",
-    "Usable wood/acrylic → offcut box for the next maker.",
-    "Clean paper, card, cans, bottles → recyclable. Tape, glue, dirty packaging → non-recyclable.",
-  ],
+  remember: "Failed prints → filament recycling. Usable scraps → offcut box. Sustainable and circular!",
 };

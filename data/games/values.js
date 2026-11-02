@@ -1,14 +1,11 @@
-// Mini-game content: VALUES — "Venn sort"
+// Mini-game content: VALUES — "Sticky Flick"
 // The notes and circles come from data/makerspace.js (values section) so the
 // whiteboard is only defined once. Settings for this game live here.
 MS.data.games.values = {
-  title: "Values Venn",
-  intro: "Each sticky note belongs somewhere on the whiteboard. Tap the right part of the Venn diagram — overlaps count!",
-  rounds: 10,      // how many notes per game (picked at random from the board)
-  passMark: 0.7,
-  learned: [
-    "Makerspace values: give more than you take, leave it better than you found it, respect people, environment & machines.",
-    "Shared with HPI: sustainable / circular. Shared with D-School: create impact, change mindsets.",
-    "HPI + D-School: solve wicked problems.",
-  ],
+  title: "Sticky Flick",
+  howTo: "Tap where each sticky note belongs. Overlaps count!",
+  rounds: 5,       // how many notes per game (picked at random from the board)
+  passMark: 0.6,   // share right to earn the badge
+  tips: ["Some values are shared: tap the overlap between two circles."],
+  remember: "Give more than you take · leave it better than you found it · respect people, environment & machines.",
 };

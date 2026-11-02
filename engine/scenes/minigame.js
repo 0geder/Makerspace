@@ -1,41 +1,124 @@
-// Mini-game scene: wraps every game in /games with an intro and result screen.
+// Mini-game scene: wraps every game in /games.
+//   ready  → the guide's "what is what" pop-up, how to play, your character, 3-2-1 (tap to skip)
+//   play   → the game, with your character reacting in the header
+//   result → stars, badge, cheering character, one "Remember" line, Next ▶ (spins the wheel again)
 //
 // A mini-game file registers itself like this:
 //   MS.games.myGame = {
 //     create(api) { return { update(dt) {}, draw(g) {} }; }
 //   };
-// api = { data, station, finish(won, scoreText) }
+// api = { data, station,
+//         good(x, y, label)            right move: sound, particles, "+1", character cheers
+//         bad(x, y, label)             wrong move: buzz, shake, character says "oops"
+//         say(text)                    the guide's pop-up at the bottom (never blocks play)
+//         finish(won, scoreText, ratio) ratio 0..1 sets the stars }
 (function () {
-  const D = MS.draw, I = MS.input;
-  const C = MS.data.settings.colors;
+  const D = MS.draw, I = MS.input, FX = MS.fx, SP = MS.sprites;
+  const S = MS.data.settings, C = S.colors;
+  const HEADER = 56;
 
-  let st, data, inst, phase, result;
+  let st, data, inst, phase, result, t = 0, react = null, lastCount = -1;
+  const me = () => MS.save.avatar();
   const leave = () => MS.back(st.id);
+  // the next round: back to the wheel, which spins by itself
+  const next = () => { history.replaceState(history.state, "", "#wheel"); MS.engine.route(); };
+
+  const stars = (ratio) => (ratio >= S.stars.three ? 3 : ratio >= S.stars.two ? 2 : 1);
 
   function start() {
-    phase = "play";
+    phase = "play"; t = 0; react = null;
+    FX.reset();
     inst = MS.games[st.game].create({
       data, station: st,
-      finish(won, scoreText) {
+      good(x, y, label) {
+        MS.audio.play("good");
+        FX.burst(x, y, C.good);
+        FX.float(x, y - 10, label || "+1", C.yellow);
+        react = { pose: "cheer", t: 0.8 };
+      },
+      bad(x, y, label) {
+        MS.audio.play("bad");
+        FX.shake(10);
+        if (label) FX.float(x, y - 10, label, "#ff8a80");
+        react = { pose: "hit", t: 0.8 };
+      },
+      say: (text, seconds) => FX.say(text, seconds),
+      finish(won, scoreText, ratio) {
         if (phase !== "play") return;
+        const r = won ? (ratio == null ? 1 : ratio) : 0;
+        result = { won, scoreText: scoreText || "", stars: won ? stars(r) : 0, t: 0, newBadge: won && !MS.save.has(st.id) };
         phase = "result";
-        result = { won, scoreText: scoreText || "" };
+        MS.save.set("played", true);
+        if (won) { MS.save.award(st.id, result.stars); FX.confetti(90); }
         MS.audio.play(won ? "win" : "lose");
-        if (won) MS.save.award(st.id);
+        FX.say((won ? "Remember: " : "Tip: ") + (data.remember || ""), 60);
       },
     });
   }
 
   function header(g) {
-    g.fillStyle = "rgba(0,0,0,0.25)"; g.fillRect(0, 0, 450, 56);
-    D.text(g, (st.badge ? st.badge.icon + "  " : "") + data.title, 16, 36, { size: 18, bold: true, color: C.yellow });
+    g.fillStyle = "rgba(0,0,0,0.3)"; g.fillRect(0, 0, 450, HEADER);
+    // your character's head and shoulders, reacting to every move
+    const pose = react ? (react.pose === "cheer" ? SP.cheer(t) : react.pose) : "idle";
+    g.save(); g.beginPath(); g.rect(0, 0, 70, HEADER); g.clip();
+    SP.draw(g, me(), pose, 36, HEADER + 42, { h: 110, crop: 0.6 }); // head and shoulders only
+    g.restore();
+    D.text(g, (st.badge ? st.badge.icon + " " : "") + data.title, 74, 35, { size: 18, bold: true, color: C.yellow });
     if (D.button(g, { x: 392, y: 8, w: 48, h: 40 }, "✕", { size: 20, color: "#3a4256" })) leave();
   }
 
-  // bullet list from y; returns the y below it
-  function bullets(g, items, mark, y) {
-    items.forEach((l) => { y += D.wrap(g, mark + " " + l, 34, y, 382, { size: 15, color: "#e8e8ee" }) + 6; });
-    return y;
+  function drawReady(g) {
+    // the real photo of the section, faded, behind everything
+    D.photo(g, st.photo, 0, 0, 450, 330, 0);
+    const grd = g.createLinearGradient(0, 120, 0, 330);
+    grd.addColorStop(0, "rgba(38,44,58,0)"); grd.addColorStop(1, "#262c3a");
+    g.fillStyle = grd; g.fillRect(0, 0, 450, 330);
+    D.rr(g, 16, 16, 200, 34, 17, st.color);
+    D.text(g, (st.badge ? st.badge.icon + " " : "") + st.name, 116, 39, { size: 15, bold: true, align: "center" });
+    if (D.button(g, { x: 392, y: 12, w: 48, h: 40 }, "✕", { size: 20, color: "rgba(31,36,48,0.8)" })) return leave();
+
+    D.wrap(g, data.title, 225, 300, 410, { size: 32, bold: true, align: "center", color: C.yellow, shadow: "rgba(0,0,0,0.4)" });
+    D.wrap(g, data.howTo || "", 225, 352, 400, { size: 19, bold: true, align: "center" });
+
+    // your character, bouncing
+    const bounce = Math.abs(Math.sin(t * 6)) * 18;
+    SP.draw(g, me(), bounce > 9 ? "jump" : "idle", 225, 650 - bounce, { h: 160 });
+    g.fillStyle = "rgba(0,0,0,0.25)"; g.beginPath(); g.ellipse(225, 654, 40 - bounce / 2, 8, 0, 0, 7); g.fill();
+
+    // 3 · 2 · 1 · GO
+    const step = S.countdownSeconds / 4;
+    const n = Math.max(0, 3 - Math.floor(t / step));
+    const k = 1 - ((t / step) % 1);
+    if (n !== lastCount) { lastCount = n; MS.audio.play(n > 0 ? "tick" : "drop"); }
+    const label = n > 0 ? String(n) : "GO!";
+    D.text(g, label, 225, 450, { size: 64 + k * 26, bold: true, align: "center", color: n > 0 ? "#fff" : C.good, shadow: "rgba(0,0,0,0.4)" });
+    D.text(g, "Tap to start now", 225, 676, { size: 14, align: "center", color: "#aab" });
+  }
+
+  function drawResult(g) {
+    const r = result, a = Math.min(1, r.t * 3);
+    g.fillStyle = "rgba(15,18,26," + 0.93 * a + ")"; g.fillRect(0, 0, 450, 800);
+    if (r.t < 0.35) return;
+    const pose = r.won ? SP.cheer(r.t) : "think";
+    SP.draw(g, me(), pose, 225, 300, { h: 200 });
+    // stars pop in one by one
+    for (let i = 0; i < 3; i++) {
+      const s = Math.min(1, Math.max(0, (r.t - 0.5 - i * 0.2) * 5));
+      const on = i < r.stars;
+      if (on && s > 0 && s < 0.25 && !r["star" + i]) { r["star" + i] = true; MS.audio.play("good"); FX.burst(150 + i * 75, 345, C.yellow, 10); }
+      D.text(g, on ? "⭐" : "☆", 150 + i * 75, 370, { size: 40 + (on ? (1 - s) * 30 : 0), emoji: on, align: "center", color: "#5b6170" });
+    }
+    let y = 420;
+    const title = r.won ? (r.newBadge ? "Badge earned!" : "Nice one!") : "So close!";
+    y += D.wrap(g, title, 225, y, 410, { size: 30, bold: true, align: "center", color: r.won ? C.good : C.yellow });
+    if (r.won && st.badge) y += D.wrap(g, st.badge.icon + " " + st.badge.name, 225, y + 4, 410, { size: 20, bold: true, align: "center" }) + 4;
+    if (r.scoreText) y += D.wrap(g, r.scoreText, 225, y + 6, 410, { size: 15, align: "center", color: "#ccd" });
+    if (r.won && st.training) D.wrap(g, "⚠️ A badge isn't machine training. Book a session first.", 225, y + 18, 400, { size: 14, bold: true, align: "center", color: C.yellow });
+
+    const main = { x: 32, y: 572, w: 250, h: 64 }, home = { x: 294, y: 572, w: 124, h: 64 };
+    const go = r.won ? next : start;
+    if (D.button(g, main, r.won ? "Next ▶" : "↻ Try again", { size: 22, color: r.won ? C.good : C.accent }) || I.pressed(" ", "enter")) return go();
+    if (D.button(g, home, "Home", { size: 18, color: "#3a4256" })) leave();
   }
 
   MS.scenes.minigame = {
@@ -45,55 +128,38 @@
       st = p.station;
       data = MS.data.games[st.game];
       if (!data) throw new Error("Missing data/games/" + st.game + ".js");
-      phase = "intro"; inst = null; result = null;
+      phase = "ready"; inst = null; result = null; t = 0; lastCount = -1;
+      FX.reset();
+      FX.say(st.tip, S.countdownSeconds + 2.5);
     },
 
     update(dt) {
+      t += dt;
+      FX.update(dt);
+      if (react) { react.t -= dt; if (react.t <= 0) react = null; }
       if (I.pressed("m")) MS.ui.toast(MS.audio.toggle() ? "🔊 Sound on" : "🔇 Sound off");
       if (I.pressed("escape")) return leave();
-      if (phase === "intro" && I.pressed(" ", "enter")) return start();
+      if (phase === "ready" && (t >= S.countdownSeconds || I.pressed(" ", "enter") || (I.mouse.clicked && I.mouse.y > 60))) {
+        I.consumeClick();
+        return start();
+      }
       if (phase === "play") inst.update(dt);
+      if (phase === "result") result.t += dt;
     },
 
     draw(g) {
       g.fillStyle = "#262c3a"; g.fillRect(0, 0, 450, 800);
+      if (phase === "ready") { drawReady(g); FX.drawBubble(g, 800); return; }
 
-      if (phase === "intro") {
-        D.panel(g, 16, 72, 418, 712);
-        D.photo(g, st.photo, 32, 88, 386, 200, 12);
-        let y = 320;
-        y += D.wrap(g, data.title, 225, y, 386, { size: 26, bold: true, align: "center", color: C.yellow }) + 8;
-        y += D.wrap(g, data.intro, 34, y, 382, { size: 16, color: "#e8e8ee" }) + 18;
-        D.text(g, "You'll learn about:", 34, y, { size: 15, bold: true, color: "#aab" });
-        bullets(g, data.learned || [], "•", y + 28);
-        if (D.button(g, { x: 115, y: 708, w: 220, h: 56 }, "▶  Start", { size: 22, color: C.good })) start();
-        return header(g);
-      }
-
-      g.save(); inst.draw(g); g.restore();
-      if (phase === "play") return header(g);
-
-      // result
-      g.fillStyle = "rgba(15,18,26,0.8)"; g.fillRect(0, 0, 450, 800);
-      D.panel(g, 16, 72, 418, 712);
-      const r = result;
-      D.text(g, r.won ? "🎉" : "🔧", 225, 150, { size: 52, emoji: true, align: "center" });
-      let y = 200;
-      y += D.wrap(g, r.won ? "Badge earned: " + st.badge.name + "!" : "Not quite — try again!", 225, y, 386, { size: 24, bold: true, align: "center", color: r.won ? C.good : C.yellow }) + 4;
-      if (r.scoreText) y += D.wrap(g, r.scoreText, 225, y, 386, { size: 15, align: "center", color: "#ccd" });
-      if (r.won && st.training) y += 8 + D.wrap(g, "⚠️ A badge isn't machine training — book a session before using it.", 225, y + 16, 386, { size: 15, bold: true, align: "center", color: C.yellow });
-      D.text(g, "What you learned:", 34, y + 24, { size: 16, bold: true, color: "#aab" });
-      bullets(g, data.learned || [], "✔", y + 54);
-
-      const left = { x: 32, y: 708, w: 186, h: 56 }, right = { x: 232, y: 708, w: 186, h: 56 };
-      if (r.won) {
-        if (D.button(g, left, "Back", { color: C.good })) leave();
-        if (D.button(g, right, "Play again", { color: "#3a4256" })) start();
-      } else {
-        if (D.button(g, left, "Try again", { color: C.accent })) start();
-        if (D.button(g, right, "Back", { color: "#3a4256" })) leave();
-      }
-      header(g);
+      const o = FX.offset();
+      g.save(); g.translate(o.x, o.y);
+      inst.draw(g);
+      g.restore();
+      FX.draw(g);
+      if (phase === "play") { header(g); FX.drawBubble(g, 800); return; }
+      drawResult(g);
+      FX.draw(g);
+      FX.drawBubble(g, 800);
     },
   };
 })();

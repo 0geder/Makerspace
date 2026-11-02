@@ -7,6 +7,7 @@
 //    color   accent colour (wheel segment, card stripe)
 //    game    id of the mini-game in /games (or null = info only, no badge)
 //    photo   picture in assets/photos shown on the info card
+//    tip     one-line pop-up the guide says before its mini-game ("what is what")
 //    facts   bullet points on the info card (array, or a function returning an array
 //            so it can read live values from data/makerspace.js)
 //    badge   {icon, name} earned when the mini-game is won
@@ -27,6 +28,7 @@
       game: "checkin",
       photo: "checkin.jpg",
       blurb: "Every visit starts here.",
+      tip: "Scan the QR on the Check-in stand every time you walk in. No check-in, no entry!",
       facts: () => [
         M.checkIn.how,
         "Check in is REQUIRED for entry — right of admission reserved.",
@@ -42,6 +44,7 @@
       game: "values",
       photo: "whiteboard.jpg",
       blurb: "The Makerspace sits where Makerspace, HPI and D-School values overlap.",
+      tip: "This whiteboard shows what we stand for: Makerspace, HPI and D-School values overlap.",
       facts: () => [
         "Makerspace: give more than you take · leave it better than you found it · respect people, environment & machines · anti-consumerism · do it well.",
         "HPI: sustainability · integrity · collaboration · mastery.",
@@ -57,6 +60,7 @@
       game: "hours",
       photo: "community-area.jpg",
       blurb: "Tables, stools and the people who make the space.",
+      tip: "The community area is where people meet, plan and build. Know when it's open!",
       facts: () => [
         "Open " + M.hours.open.days + ", " + M.hours.open.time + ".",
         ...M.hours.sessions.map((s) => s.day + " " + s.time + " — session with " + s.host + "."),
@@ -73,6 +77,7 @@
       game: "tools",
       photo: "handtools.jpg",
       blurb: "Pegboard wall and benches full of hand tools.",
+      tip: "The pegboard wall holds the hand tools. Right tool, right job, then back on the wall.",
       facts: [
         "Hammers, mallets, files, squares, knives, pliers, wire strippers, clamps and glue guns.",
         "Use the right tool for the job — it's safer and gives a better result.",
@@ -87,6 +92,7 @@
       game: null,
       photo: "showcase-dschool.jpg",
       blurb: "Things made here — for inspiration.",
+      tip: "Everything on this shelf was made here. Get inspired, and leave them on the shelf!",
       facts: [
         "3D-printed d-school letters, 3D-scanned & printed heads, laser engravings.",
         "Laser-cut finger-joint boxes with engraved names — a classic first project.",
@@ -102,6 +108,7 @@
       game: "craft",
       photo: "craft-bench.jpg",
       blurb: "Personalise things: vinyl, mugs, plates, T-shirts, scans.",
+      tip: "Cricut, mug press, T-shirt press and a 3D scanner: this bench personalises things.",
       facts: [
         "Cricut Maker 4 — cuts vinyl, paper, card and fabric.",
         "Mug press, plate press and T-shirt heat press — transfer designs with heat.",
@@ -119,6 +126,7 @@
       game: "printing",
       photo: "bambu-h2d.jpg",
       blurb: "Glass room full of Bambu Lab H2D printers.",
+      tip: "Bambu Lab H2D printers build parts layer by layer. Log your print with the machine QR!",
       facts: () => [
         "Bambu Lab H2D printers with AMS 2 Pro units (multi-colour filament).",
         "Scan the machine's QR to record your usage when you START and when you FINISH.",
@@ -136,6 +144,7 @@
       game: "laser",
       photo: "laser-m1.jpg",
       blurb: "Laser cutters with fume extraction.",
+      tip: "The laser cuts wood and acrylic, but some materials make toxic gas. Know which!",
       facts: [
         "Laser Cutter M1 — cut and engrave wood, acrylic, card. Training required.",
         "Know the red EMERGENCY STOP button. Never leave a running laser unattended.",
@@ -152,6 +161,7 @@
       game: "recycling",
       photo: "recycling-toucan.jpg",
       blurb: "Sustainable / circular: waste becomes material.",
+      tip: "Failed prints become new filament here. Sort your waste right.",
       facts: [
         "Failed prints and filament scraps are shredded and recycled into new filament.",
         "Wood offcuts go in the offcut box for someone else's project.",
@@ -167,6 +177,7 @@
       game: "ideas",
       photo: "laser-boxes.jpg",
       blurb: "Bring an idea worth materialising.",
+      tip: "Bring an idea worth making. Personal learning projects: yes. Graded assignments: no.",
       facts: () => [
         "YES: " + M.projects.yes.join(", ") + ".",
         "NO: " + M.projects.no.join(", ") + ".",
@@ -182,6 +193,7 @@
       game: null,
       photo: "printer-room.jpg",
       blurb: "Store your bag, take a break.",
+      tip: "Bags go in the cubby lockers. Keep benches and walkways clear.",
       facts: [
         "Use the cubby lockers for your bags — keep benches and walkways clear.",
         "Fire extinguishers are on the walls — know where they are.",

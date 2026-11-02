@@ -1,13 +1,23 @@
-// Mini-game content: 3D PRINTING — "Layer stacker" + quick-check questions.
+// Mini-game content: 3D PRINTING — "Layer Stack"
+// Tap to drop each layer on the one below; overhang is trimmed.
 MS.data.games.printing = {
-  title: "Layer by Layer",
-  intro: "3D printers build parts one layer at a time. Tap to drop each layer right on top of the last. Overhang gets trimmed — don't run out of model!",
-  layersToWin: 10,
-  startWidth: 180,       // width of the first layer in pixels (the screen is 450 wide)
-  startSpeed: 130,       // nozzle speed (pixels/sec); increases each layer
-  speedUp: 12,
-  // Asked after stacking. You need `passMark` of them right to earn the badge.
-  passMark: 0.6,
+  title: "Layer Stack",
+  howTo: "Tap to drop each layer right on top of the last one!",
+  layersToWin: 6,
+  startWidth: 200,       // width of the first layer in pixels (the screen is 450 wide)
+  startSpeed: 150,       // nozzle speed (pixels/sec); increases each layer
+  speedUp: 18,
+  // Pop-ups, one after each layer (in order).
+  tips: [
+    "Printers build parts layer by layer from a sliced 3D model.",
+    "The AMS 2 Pro on top feeds several filaments: multi-colour prints!",
+    "Before you print: scan the machine's QR to log your START.",
+    "When it's done: scan again to log your FINISH and clear the bed.",
+    "Each layer needs support from the one below. Design for it!",
+  ],
+  remember: "Log every print with the machine QR at START and FINISH. Training comes first.",
+
+  // Not used by the game: these feed the daily challenge on the home page.
   checks: [
     {
       q: "You're starting a print on H2D 1. What do you do first?",
@@ -24,10 +34,5 @@ MS.data.games.printing = {
       answer: "Scan the QR again to log the FINISH and clear the bed",
       wrong: ["Leave it for tomorrow", "Unplug the printer", "Start someone else's print"],
     },
-  ],
-  learned: [
-    "Prints are built layer by layer — each layer needs support from the one below.",
-    "Bambu Lab H2D printers + AMS 2 Pro = multi-colour printing.",
-    "Log your usage with the QR when you START and FINISH. Training first!",
   ],
 };

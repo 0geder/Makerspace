@@ -1,14 +1,20 @@
-// Mini-game content: HOURS — timed quiz about when / who.
-// Questions are built from data/makerspace.js so changing the hours there
-// automatically changes the quiz. Add extra fixed questions in `extra`.
+// Mini-game content: HOURS — "Open or Closed?"
+// A day + time card appears; tap OPEN or CLOSED. The cards are worked out from
+// `hours` in data/makerspace.js, so changing the hours there changes the game too.
 (function () {
   const M = MS.data.makerspace;
   const s = M.hours.sessions;
   MS.data.games.hours = {
-    title: "Open Hours Rush",
-    intro: "Answer before the clock runs out. Know when the space is open and who's around.",
-    secondsPerQuestion: 12,
-    passMark: 0.7,
+    title: "Open or Closed?",
+    howTo: "Is the Makerspace open at this time? Tap fast!",
+    cards: 5,              // how many time cards per game
+    secondsPerCard: 5,
+    passMark: 0.6,
+    times: [8, 10, 13, 16, 18],   // hours of the day the cards can show (24h clock)
+    remember: "Open " + M.hours.open.days + ", " + M.hours.open.time + " · " +
+      M.hours.community.name + " " + M.hours.community.day + " " + M.hours.community.time + ".",
+
+    // Not used by the game: these feed the daily challenge on the home page.
     questions: [
       {
         q: "When is the Makerspace open?",
@@ -40,11 +46,6 @@
         answer: M.why.join(", "),
         wrong: ["To sell 3D prints", "To store old equipment", "To host exams"],
       },
-    ],
-    learned: [
-      "Open " + M.hours.open.days + ", " + M.hours.open.time + ".",
-      "Staffed sessions: " + s.map((x) => x.day + " " + x.time + " (" + x.host + ")").join(", ") + ".",
-      M.hours.community.name + ": " + M.hours.community.day + " " + M.hours.community.time + ".",
     ],
   };
 })();
