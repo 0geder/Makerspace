@@ -61,7 +61,7 @@ MS.games.laser = {
         g.fillStyle = "#1c1c1c"; g.fillRect(bed.x, bed.y + 4, bed.w, 10);
         g.fillStyle = "rgba(255,60,60,0.8)"; g.fillRect(bed.x + bed.w / 2 - 1, bed.y - 18, 2, 20);
         // HUD
-        D.text(g, "✂️ " + catches + " / " + d.catchesToWin, 16, 88, { size: 18, bold: true });
+        D.text(g, "✂️ " + catches + " / " + d.catchesToWin, 16, 88, { size: 18, bold: true, color: C.ink });
         D.hearts(g, 352, 88, lives, d.lives);
       },
     };

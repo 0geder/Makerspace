@@ -48,7 +48,7 @@ MS.games.values = {
       },
       draw(g) {
         // board
-        D.rr(g, 16, 196, 418, 412, 10, "#f7f7f2", "#9aa0a6", 6);
+        D.rr(g, 16, 196, 418, 412, 10, "#ffffff", "#9aa0a6", 6);
         circles.forEach((c) => {
           const hl = fb && !fb.ok && fb.answer.includes(c.id);
           g.fillStyle = c.color + (hl ? "40" : "14");
@@ -69,7 +69,7 @@ MS.games.values = {
           g.restore();
         }
         // progress dots
-        notes.forEach((_, k) => D.text(g, k < i ? "●" : k === i ? "◉" : "○", 225 + (k - (notes.length - 1) / 2) * 22, 640, { size: 16, align: "center", color: k <= i ? C.yellow : "#5b6170" }));
+        notes.forEach((_, k) => D.text(g, k < i ? "●" : k === i ? "◉" : "○", 225 + (k - (notes.length - 1) / 2) * 22, 640, { size: 16, align: "center", color: k <= i ? C.accent : C.speck }));
       },
     };
   },

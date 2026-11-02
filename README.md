@@ -84,7 +84,9 @@ Every game is short (≤ 6 rounds) and teaches through pop-ups, not question lis
 | How many visits unlock each level | `levels` in `data/settings.js` |
 | A mini-game's length, speed, pop-ups, `howTo`, `remember` line and content | `data/games/<game>.js` |
 | The characters' names (or add a new one) | `data/characters.js` |
-| Colours, star thresholds, wheel speed, countdown | `data/settings.js` |
+| The colour theme (game) | `colors` in `data/settings.js` |
+| The colour theme (home page) | `:root` at the top of `style.css` |
+| Star thresholds, wheel speed, countdown | `data/settings.js` |
 | Photos | drop a `.jpg` into `assets/photos/` and reference its file name |
 
 Values flow through automatically. Change the hours in `data/makerspace.js` and the

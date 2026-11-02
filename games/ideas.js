@@ -34,11 +34,11 @@ MS.games.ideas = {
       draw(g) {
         if (i >= cards.length) return;
         const c = cards[i];
-        D.text(g, "Idea " + (i + 1) + " / " + cards.length + "   ✔ " + score, 225, 92, { size: 16, align: "center", color: "#ccd" });
+        D.text(g, "Idea " + (i + 1) + " / " + cards.length + "   ✔ " + score, 225, 92, { size: 16, align: "center", color: C.muted });
         const off = fb ? fb.dir * slide * 500 : 0;
         g.save(); g.translate(225 + off, 330); g.rotate(fb ? fb.dir * slide * 0.3 : 0);
-        D.rr(g, -195, -205, 400, 410, 18, "rgba(0,0,0,0.3)");
-        D.rr(g, -200, -210, 400, 410, 18, "#f3efe6", fb ? (fb.ok ? C.good : C.bad) : null, 6);
+        D.rr(g, -195, -205, 400, 410, 18, C.line);
+        D.rr(g, -200, -210, 400, 410, 18, C.wall, fb ? (fb.ok ? C.good : C.bad) : C.wood, 6);
         D.text(g, "💡", 0, -140, { size: 44, emoji: true, align: "center" });
         D.wrap(g, c.text, 0, -40, 350, { size: 22, bold: true, align: "center", valign: "middle", color: "#222" });
         if (fb) {

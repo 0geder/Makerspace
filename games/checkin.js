@@ -47,15 +47,16 @@ MS.games.checkin = {
         const pose = next === n ? SP.cheer(t) : moving ? SP.walk(t) : "idle";
         SP.draw(g, MS.save.avatar(), pose, x, 212, { h: 120 });
 
-        D.text(g, next < n ? "Step #" + (next + 1) + "?" : "You're in!", 16, 258, { size: 21, bold: true });
+        D.text(g, next < n ? "Step #" + (next + 1) + "?" : "You're in!", 16, 258, { size: 21, bold: true, color: C.ink });
         D.hearts(g, 352, 258, lives, d.lives);
         cards.forEach((c, k) => {
           const r = rect(k);
           const off = c.shake ? Math.sin(c.shake * 60) * 6 : 0;
-          const fill = c.done ? C.good : c.shake ? C.bad : MS.input.hover(r) ? "#3a4256" : "#2a3142";
-          D.rr(g, r.x + off, r.y, r.w, r.h, 16, fill, "rgba(255,255,255,0.2)", 2);
-          if (c.done) D.text(g, String(c.i + 1), r.x + 22, r.y + 32, { size: 22, bold: true, align: "center" });
-          D.wrap(g, c.s.text, r.x + off + r.w / 2, r.y + r.h / 2, r.w - 24, { size: 17, bold: true, align: "center", valign: "middle" });
+          const fill = c.done ? C.good : c.shake ? C.bad : MS.input.hover(r) ? C.tileHover : C.tile;
+          D.rr(g, r.x + off + 2, r.y + 4, r.w, r.h, 16, C.line);
+          D.rr(g, r.x + off, r.y, r.w, r.h, 16, fill, c.done || c.shake ? null : C.wood, 3);
+          if (c.done) D.text(g, String(c.i + 1), r.x + 22, r.y + 32, { size: 22, bold: true, align: "center", color: "#fff" });
+          D.wrap(g, c.s.text, r.x + off + r.w / 2, r.y + r.h / 2, r.w - 24, { size: 17, bold: true, align: "center", valign: "middle", color: c.done || c.shake ? "#fff" : C.ink });
         });
       },
     };

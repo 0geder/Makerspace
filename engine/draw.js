@@ -18,13 +18,13 @@
     text(g, str, x, y, o) {
       o = o || {};
       g.font = (o.bold ? "bold " : "") + (o.size || 16) + "px " + (o.emoji ? EMOJI : FONT);
-      g.fillStyle = o.color || "#fff";
+      g.fillStyle = o.color || C.ink;
       g.textAlign = o.align || "left";
       g.textBaseline = o.baseline || "alphabetic";
       if (o.shadow) {
         g.fillStyle = o.shadow;
         g.fillText(str, x + 2, y + 2);
-        g.fillStyle = o.color || "#fff";
+        g.fillStyle = o.color || C.ink;
       }
       g.fillText(str, x, y);
     },
@@ -53,7 +53,7 @@
       o = o || {};
       const hover = MS.input.hover(r) && !o.disabled;
       const base = o.disabled ? "#9aa0a6" : o.color || C.accent;
-      D.rr(g, r.x, r.y + (hover ? 0 : 3), r.w, r.h, 10, "rgba(0,0,0,0.25)");
+      D.rr(g, r.x, r.y + (hover ? 0 : 4), r.w, r.h, 10, "rgba(70,45,20,0.28)");
       D.rr(g, r.x, r.y - (hover ? 2 : 0), r.w, r.h, 10, base, o.border || null, 3);
       D.wrap(g, label, r.x + r.w / 2, r.y + r.h / 2 - (hover ? 2 : 0), r.w - 16,
         { size: o.size || 18, bold: true, align: "center", valign: "middle", color: o.textColor || "#fff" });
@@ -82,24 +82,36 @@
         const iw = im.naturalWidth * s, ih = im.naturalHeight * s;
         g.drawImage(im, x + (w - iw) / 2, y + (h - ih) / 2, iw, ih);
       } else {
-        g.fillStyle = "#444";
+        g.fillStyle = C.speck;
         g.fillRect(x, y, w, h);
       }
       g.restore();
     },
 
     panel(g, x, y, w, h) {
-      D.rr(g, x + 4, y + 6, w, h, 16, "rgba(0,0,0,0.3)");
-      D.rr(g, x, y, w, h, 16, C.ui, "rgba(255,255,255,0.15)", 2);
+      D.rr(g, x + 3, y + 5, w, h, 16, C.line);
+      D.rr(g, x, y, w, h, 16, C.wall, C.wood, 3);
     },
 
     bar(g, x, y, w, h, t, color) {
-      D.rr(g, x, y, w, h, h / 2, "rgba(255,255,255,0.15)");
+      D.rr(g, x, y, w, h, h / 2, C.line);
       if (t > 0) D.rr(g, x, y, Math.max(h, w * MS.util.clamp(t, 0, 1)), h, h / 2, color || C.good);
     },
 
     hearts(g, x, y, n, max) {
-      for (let i = 0; i < max; i++) D.text(g, i < n ? "❤️" : "🤍", x + i * 26, y, { size: 20, emoji: true });
+      for (let i = 0; i < max; i++) {
+        if (i < n) D.text(g, "❤️", x + i * 26, y, { size: 20, emoji: true });
+        else D.text(g, "♡", x + i * 26 + 1, y, { size: 22, bold: true, color: C.muted });
+      }
+    },
+
+    // The game background: light terrazzo floor, like the real space.
+    floor(g) {
+      g.fillStyle = C.bg; g.fillRect(0, 0, MS.engine.W, MS.engine.H);
+      for (let i = 0; i < 260; i++) {
+        g.fillStyle = i % 3 ? C.speck : "rgba(120,110,95,0.25)";
+        g.fillRect((i * 137.5) % MS.engine.W, (i * 89.3 + (i % 7) * 31) % MS.engine.H, 2 + (i % 2), 2 + (i % 3 === 0));
+      }
     },
   });
 })();
