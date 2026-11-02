@@ -1,7 +1,7 @@
 // Save: progress stored in the browser. Works (without saving) if storage is blocked.
 (function () {
   const KEY = "makerspace-quest-v1";
-  const blank = () => ({ name: "", badges: {}, introSeen: false, scanned: {}, days: [], daily: null, streak: 0, goal: null });
+  const blank = () => ({ name: "", avatar: null, badges: {}, stars: {}, played: false, introSeen: false, scanned: {}, days: [], daily: null, streak: 0, goal: null });
 
   let state = blank();
   try {
@@ -16,7 +16,19 @@
   MS.save = {
     get state() { return state; },
     set(field, value) { state[field] = value; write(); },
-    award(stationId) { state.badges[stationId] = true; write(); },
+    // a won mini-game: the badge, and the best star count so far (1–3)
+    award(stationId, stars) {
+      state.badges[stationId] = true;
+      state.stars[stationId] = Math.max(state.stars[stationId] || 1, stars || 1);
+      write();
+    },
+    stars: (stationId) => state.stars[stationId] || (state.badges[stationId] ? 1 : 0),
+    totalStars: () => MS.save.badgeStations().reduce((n, s) => n + MS.save.stars(s.id), 0),
+    // the player's character (data/characters.js), defaulting to the first one
+    avatar() {
+      const P = MS.data.characters.players;
+      return P.find((p) => p.id === state.avatar) || P[0];
+    },
     scan(stationId) { state.scanned[stationId] = true; write(); },
     has: (stationId) => !!state.badges[stationId],
     // keeps the visit history: starting over shouldn't re-lock levels you came back for

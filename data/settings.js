@@ -16,9 +16,16 @@ MS.data.settings = {
   height: 800,
 
   wheel: {
-    spinSeconds: 3.5,
+    spinSeconds: 2,        // the wheel spins by itself when you press PLAY or Next
     skipCompleted: true,   // the wheel only lands on sections you haven't finished
+    landPause: 0.9,        // seconds to show where it landed before the game starts
   },
+
+  // The "ready" screen before every mini-game: 3-2-1 countdown (tap to skip).
+  countdownSeconds: 2.4,
+
+  // Stars on the result screen, by score (0..1). 1 star = you won the badge.
+  stars: { two: 0.75, three: 1 },
 
   // Levels unlock by how often you come back: `visits` = different days you've opened the game.
   // Each station in data/stations.js has a `level`. Scanning a station's QR code unlocks it early.

@@ -2,9 +2,10 @@
 This is an onboarding game to the Makerspace lab
 
 A phone-first onboarding game for members of the Makerspace (HPI d-school Afrika).
-Members scan a QR code, browse the sections of the real space, and win a mini-game in each
-one to collect 9 badges and earn their **Maker Pass**. New sections unlock each time they
-come back, and a daily challenge gives them a reason to open it on every visit.
+Scan a QR code, pick a character, tap **PLAY**: the Maker Wheel spins and drops you straight into
+a 15–30 second mini-game about one section of the real space. Bolt, the guide robot, pops up
+with what is what while you play. Win to collect 9 badges (and up to 27 ⭐) and earn your
+**Maker Pass**. New sections unlock each time you come back, so day 1 takes about two minutes.
 
 ## Play
 
@@ -18,9 +19,13 @@ come back, and a daily challenge gives them a reason to open it on every visit.
 
 ## What members see
 
-- **Home**: today's staffed session and meetup, a daily one-question challenge (with a 🔥 streak),
-  "What do you want to make?" (picks a personal path of sections), the Maker Wheel for a
-  random pick, and every section grouped by level.
+- **First open**: Bolt says hi → pick one of 4 makers (name optional) → **▶ PLAY**. Two taps.
+- **The run**: the wheel spins by itself → a ready screen (real photo of the area, Bolt's
+  one-line tip, 3-2-1) → the mini-game → stars, badge, your character cheering and one
+  "Remember" line → **Next ▶** spins again. When today's games are done: "Day complete!".
+- **Home** (after the first run): your character, level, badges and stars, a big PLAY button,
+  today's staffed session and meetup, a daily one-question challenge (with a 🔥 streak),
+  "What do you want to make?" (a personal path of sections), and every section's info page.
 - **Levels by visits**: a visit is a different calendar day the game is opened.
   Level 1 *Newcomer* (visit 1) → Level 2 *Member* (visit 2) → Level 3 *Maker* (visit 4).
   Locked sections still show their info and safety facts; only the mini-game waits.
@@ -53,17 +58,19 @@ phone, so staff can't see it.
 
 ## The sections & mini-games
 
+Every game is short (≤ 6 rounds) and teaches through pop-ups, not question lists.
+
 | Section | Mini-game | Teaches |
 |---|---|---|
-| 🎫 Entrance & Check-in | Order the onboarding steps | Check in, membership, training, logging usage |
-| 💡 Values Whiteboard | Sort sticky notes into the Venn diagram | Makerspace / HPI / D-School values |
-| 🕒 Community Area | Timed quiz | Opening hours, staffed sessions, community meetup |
-| 🔨 Hand-Tool Bench | Whack-a-tool | Which hand tool for which job |
-| 🖨️ 3D Printing Room | Layer stacker + quick check | Layer-by-layer printing, Bambu H2D, QR usage log |
-| ⚡ Laser Room | Catch safe materials | Laser-safe vs. dangerous materials, e-stop |
-| ♻️ Recycling Corner | Sort the waste | Filament recycling, offcuts, bins |
-| 🎨 Craft & Print Bench | Which machine? (photos) | Cricut, mug / T-shirt press, 3D scanner |
-| 🚀 Idea Lab Desk | Swipe ✔ / ✘ | Which projects belong in the Makerspace |
+| 🎫 Entrance & Check-in | **Check-In Dash**: tap 4 steps in order, your maker runs to the door | Check in, membership, equipment session, logging usage |
+| 💡 Values Whiteboard | **Sticky Flick**: tap where 5 sticky notes go in the Venn | Makerspace / HPI / D-School values |
+| 🕒 Community Area | **Open or Closed?**: 5 day-and-time cards | Opening hours, who hosts which session, the meetup |
+| 🔨 Hand-Tool Bench | **Tool Whack**: hit the right tool, 5 hits | Which hand tool for which job |
+| 🖨️ 3D Printing Room | **Layer Stack**: drop 6 layers | Layer-by-layer printing, AMS, QR usage log |
+| ⚡ Laser Room | **Safe Catch**: carry the bed, catch 6 safe sheets | Laser-safe vs. dangerous materials, e-stop |
+| ♻️ Recycling Corner | **Bin It**: 6 items, 4 bins | Filament recycling, offcuts, bins |
+| 🎨 Craft & Print Bench | **Match the Machine**: 4 makers, tap the photo | Cricut, mug / T-shirt press, 3D scanner, laser vs printer |
+| 🚀 Idea Lab Desk | **Make It or Skip It**: swipe 5 ideas | Which projects belong in the Makerspace |
 
 ## ✏️ Editing the game (no coding needed)
 
@@ -72,40 +79,48 @@ phone, so staff can't see it.
 | I want to change… | Edit this file |
 |---|---|
 | Opening hours, staff names, values, rules, "who / why / what" | `data/makerspace.js` |
-| A section's info card, photo, badge, level, "needs training" | `data/stations.js` |
+| A section's info card, photo, Bolt's `tip`, badge, level, "needs training" | `data/stations.js` |
 | The "What do you want to make?" goals | `data/goals.js` |
 | How many visits unlock each level | `levels` in `data/settings.js` |
-| Questions / items / answers of one mini-game | `data/games/<game>.js` |
-| Colours, pass marks, wheel | `data/settings.js` |
+| A mini-game's length, speed, pop-ups, `howTo`, `remember` line and content | `data/games/<game>.js` |
+| The characters' names (or add a new one) | `data/characters.js` |
+| Colours, star thresholds, wheel speed, countdown | `data/settings.js` |
 | Photos | drop a `.jpg` into `assets/photos/` and reference its file name |
 
 Values flow through automatically. Change the hours in `data/makerspace.js` and the
-Community Area info card, the "Today" card, the hours quiz, the daily challenge and the
-Maker Pass all update. The daily challenge draws its questions from the mini-game data files.
+Community Area info card, the "Today" card, the Open-or-Closed game, the daily challenge and
+the Maker Pass all update. The daily challenge draws its questions from the mini-game data files.
 
 > Tip: set `debug: true` in `data/settings.js` to unlock every mini-game regardless of level.
 
 ## ➕ Adding a new mini-game
 
-1. Create `data/games/mygame.js` with its content (`title`, `intro`, `learned`, and your own fields).
+1. Create `data/games/mygame.js` with its content: `title`, `howTo` (one line), `remember`
+   (one line for the result screen), and your own fields. Keep it to 6 rounds or fewer.
 2. Create `games/mygame.js`:
    ```js
    MS.games.mygame = {
-     create(api) {           // api.data = your data file, api.finish(won, scoreText)
+     create(api) {
+       // api.data              your data file
+       // api.good(x, y, "+1")  right move: sound, particles, your character cheers
+       // api.bad(x, y, "✗")    wrong move: buzz, shake, your character goes "oops"
+       // api.say("…")          Bolt's pop-up at the bottom (use it to say what is what)
+       // api.finish(won, "3 / 5 right", 0.6)   the last number (0..1) sets the stars
        return {
-         update(dt) { /* game logic, call api.finish(true) when won */ },
+         update(dt) { /* game logic */ },
          draw(g)    { /* draw with the canvas context g (450×800, portrait) */ },
        };
      },
    };
    ```
 3. Add both files to `index.html` (data in section 1, game in section 3).
-4. In `data/stations.js`, set `game: "mygame"` and a `level` on a station (or add a new station).
+4. In `data/stations.js`, set `game: "mygame"`, a `level` and a `tip` on a station (or add one).
    The home screen, the wheel, the badge count and the Maker Pass pick it up automatically.
-   Keep the top 56px free: the title and the ✕ button live there.
+   Keep the top 56px free (title, your character, ✕) and keep tap targets above y≈680
+   (Bolt's pop-ups live along the bottom). `MS.sprites.draw(g, MS.save.avatar(), "cheer0", x, y)`
+   draws the player's character in any pose from `data/characters.js`.
 
-`engine/quiz.js` gives you a ready-made multiple-choice quiz (`MS.Quiz(questions, opts)`).
-See `games/hours.js` for a 15-line example.
+`node tests/logic.test.js` checks every mini-game has a `title`, `howTo` and `remember` and is ≤ 6 rounds.
 
 ## Project layout
 
@@ -113,16 +128,21 @@ See `games/hours.js` for a 15-line example.
 index.html          loads everything
 style.css           cards, certificate, print layout
 data/               ← content (edit me)
-engine/             core loop + URL routing, input, drawing, audio, save, quiz, daily challenge
-engine/scenes/      home (HTML page), minigame, wheel
+engine/             core loop + URL routing, input, drawing, audio, save, daily challenge,
+                    sprites (characters), fx (particles, shake, Bolt's pop-ups)
+engine/scenes/      home (HTML page), minigame (ready → play → result), wheel
 games/              one file per mini-game
-tests/              node tests/logic.test.js: checks visits, levels and the daily challenge
+tests/              node tests/logic.test.js: visits, levels, daily challenge, opening hours, stars
 assets/photos/      photos of the real space
+assets/characters/  character sprite sheets (Kenney, CC0)
 PROMPT.md           the full design brief / build prompt
 ```
 
-## Content source
+## Content source & credits
 
 Built from the Makerspace walkthrough videos, the photos of the space and the
-"Makerspace — Values" whiteboard (see `PROMPT.md`, section 3). Staff names on the board were
+"Makerspace — Values" whiteboard (see `PROMPT.md`, section 5). Staff names on the board were
 handwritten. Please check the spelling in `data/makerspace.js`.
+
+Characters: [Toon Characters 1](https://kenney.nl/assets/toon-characters-1) by Kenney (CC0),
+trimmed to the poses the game uses. License: `assets/characters/LICENSE-kenney.txt`.

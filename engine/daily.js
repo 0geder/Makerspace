@@ -70,5 +70,42 @@
         next: nextSession(),
       };
     },
+
+    DAYS,
+
+    // "2pm – 5pm" → [14, 17]; "9am – 3pm" → [9, 15]; "2 – 5pm" → [14, 17]
+    hourRange(str) {
+      const parts = String(str).split(/[–—-]|\bto\b/).map((p) => /(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i.exec(p));
+      if (parts.length < 2 || !parts[0] || !parts[1]) return null;
+      const to24 = (m, fallback) => {
+        let h = +m[1] % 12 + (m[2] ? +m[2] / 60 : 0);
+        const ap = (m[3] || fallback || "").toLowerCase();
+        return ap === "pm" ? h + 12 : h;
+      };
+      const end = to24(parts[1]);
+      let start = to24(parts[0], parts[0][3] ? null : parts[1][3]);
+      if (start > end) start -= 12; // "11 – 3pm" means 11am
+      return [start, end];
+    },
+
+    // "Monday – Friday" → [1,2,3,4,5]; "Tuesday" → [2]
+    dayRange(str) {
+      const found = String(str).split(/[–—-]|\bto\b/).map((p) => DAYS.findIndex((d) => p.toLowerCase().includes(d.toLowerCase())));
+      if (found[0] < 0) return [];
+      if (found.length < 2 || found[1] < 0) return [found[0]];
+      const out = [];
+      for (let d = found[0]; ; d = (d + 1) % 7) { out.push(d); if (d === found[1] || out.length > 7) break; }
+      return out;
+    },
+
+    // Is the space open on day `d` (0 = Sunday) at `hour` (24h)? And why: open hours / sessions / meetup.
+    status(d, hour) {
+      const H = MS.data.makerspace.hours, why = [];
+      const inside = (time) => { const r = MS.daily.hourRange(time); return !!r && hour >= r[0] && hour < r[1]; };
+      if (MS.daily.dayRange(H.open.days).includes(d) && inside(H.open.time)) why.push("Open hours: " + H.open.days + ", " + H.open.time);
+      H.sessions.forEach((s) => { if (DAYS.indexOf(s.day) === d && inside(s.time)) why.push(s.host + "'s session, " + s.time); });
+      if (DAYS.indexOf(H.community.day) === d && inside(H.community.time)) why.push(H.community.name + ", " + H.community.time);
+      return { open: why.length > 0, why };
+    },
   };
 })();

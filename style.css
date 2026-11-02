@@ -99,6 +99,45 @@ body.in-game #home, body:not(.in-game) #stage { display: none; }
 .here { background: var(--c); color: #fff; font-weight: 700; padding: 10px 14px; border-radius: 12px; }
 footer { display: flex; justify-content: space-between; margin-top: 24px; }
 
+/* Characters (Kenney sprite sheets, see engine/sprites.js) */
+.sprite { display: inline-block; background-repeat: no-repeat; flex: none; }
+.bob { animation: bob 1.6s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-6px); } }
+
+/* Quick Play hero */
+.hero.first { text-align: center; padding-top: 4px; }
+.logo { font-size: 30px; font-weight: 900; letter-spacing: 0.02em; margin: 6px 0 4px; color: var(--yellow); }
+.guide-row { display: flex; align-items: flex-end; gap: 6px; text-align: left; margin: 4px 0 10px; }
+.bubble {
+  position: relative; flex: 1; margin: 0 0 30px; padding: 12px 14px; border-radius: 16px;
+  background: #fff; color: #1f2430; font-weight: 700; font-size: 15px; line-height: 1.35;
+}
+.bubble::before { content: ""; position: absolute; left: -10px; bottom: 18px; border: 8px solid transparent; border-right: 12px solid #fff; border-left: 0; }
+.pick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 6px 0 12px; }
+.pick-btn {
+  display: flex; flex-direction: column; align-items: center; padding: 8px 0 6px; border-radius: 14px;
+  background: var(--ui); border: 3px solid transparent; color: var(--text); cursor: pointer; touch-action: manipulation;
+}
+.pick-btn.on { border-color: var(--yellow); background: var(--ui2); }
+.pick-btn small { font-weight: 700; margin-top: 2px; }
+.name-in {
+  display: block; width: 100%; padding: 12px 14px; font-size: 17px; text-align: center;
+  border-radius: 12px; border: 2px solid #3a4256; background: #12151d; color: #fff;
+}
+.btn.play {
+  margin: 14px 0 8px; padding: 18px; font-size: 26px; font-weight: 900; letter-spacing: 0.06em;
+  background: var(--good); box-shadow: 0 6px 0 #1e7a42; animation: pulse 1.4s ease-in-out infinite;
+}
+.btn.play:active { transform: translateY(4px); box-shadow: 0 2px 0 #1e7a42; }
+@keyframes pulse { 50% { filter: brightness(1.12); } }
+.me-row { display: flex; align-items: center; gap: 10px; }
+.me { background: none; border: 0; padding: 0; cursor: pointer; }
+.me-row h1 { margin: 0 0 6px; }
+.stats { margin: 4px 0 0; font-weight: 700; }
+.peek { margin: 18px 0; }
+.peek summary { cursor: pointer; color: var(--muted); padding: 8px 0; }
+.sections-title { margin-top: 28px; }
+
 /* Maker Pass */
 .warn { background: rgba(242, 194, 48, 0.12); border-left: 4px solid var(--yellow); padding: 10px 12px; border-radius: 8px; font-size: 14px; }
 .center { text-align: center; }

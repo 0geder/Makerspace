@@ -1,21 +1,16 @@
-// Mini-game content: CHECK-IN — "Order the steps"
-// Tap the steps in the correct order. `steps` must be listed in the CORRECT order;
-// the game shuffles them.
+// Mini-game content: CHECK-IN — "Check-In Dash"
+// Tap the steps in the right order; your character runs to the door with each one.
+//   steps   listed in the CORRECT order (the game shuffles them). Keep it to 3–5.
+//   pop     what the guide says when that step is tapped
 MS.data.games.checkin = {
-  title: "First Visit: Step by Step",
-  intro: "Put a new member's journey in the right order. Tap the steps from first to last.",
+  title: "Check-In Dash",
+  howTo: "Tap the steps in order: what comes first?",
   lives: 3,
   steps: [
-    "Scan the QR on the Check-in stand at the entrance",
-    "Become a member",
-    "Book a 1-hour session to learn the equipment",
-    "Complete equipment training (CNC, 3D, laser)",
-    "Bring an idea worth materialising",
-    "Scan the machine QR when you START and FINISH",
+    { text: "Scan the QR at the Check-in stand",           pop: "Check in at the entrance EVERY visit. It's required for entry." },
+    { text: "Become a member",                              pop: "Membership is your key to the space." },
+    { text: "Book a 1-hour session to learn the equipment", pop: "1-hour sessions teach you the machines. No session, no machine." },
+    { text: "Scan the machine QR at START & FINISH",        pop: "Every machine has a QR sign: log when you start AND when you finish." },
   ],
-  learned: [
-    "Check in is required for entry — every visit.",
-    "Membership → 1-hour equipment session → training → then the machines are yours.",
-    "Always log machine usage at the start AND end of a job.",
-  ],
+  remember: "Check in every visit → member → 1-hour equipment session → log machine use.",
 };

@@ -1,16 +1,19 @@
-// Mini-game content: CRAFT — "Which machine?"
-// A request appears; choose the machine (cards show real photos).
+// Mini-game content: CRAFT — "Match the Machine"
+// A request appears; tap the photo of the right machine.
+//   machines[].pop   what the guide says when it's the right answer
 MS.data.games.craft = {
-  title: "Which Machine?",
-  intro: "Makers bring you their ideas. Pick the best machine in the space for each one.",
-  passMark: 0.7,
+  title: "Match the Machine",
+  howTo: "A maker needs something. Tap the right machine!",
+  rounds: 4,
+  secondsPerRequest: 6,
+  passMark: 0.6,
   machines: [
-    { id: "cricut",  name: "Cricut Maker 4",    photo: "craft-bench.jpg" },
-    { id: "mug",     name: "Mug press",         photo: "mug-press.jpg" },
-    { id: "tshirt",  name: "T-shirt heat press",photo: "tshirt-press.jpg" },
-    { id: "scanner", name: "3D scanner",        photo: "3d-scanner.jpg" },
-    { id: "laser",   name: "Laser cutter",      photo: "laser-m1.jpg" },
-    { id: "printer", name: "3D printer",        photo: "bambu-h2d.jpg" },
+    { id: "cricut",  name: "Cricut Maker 4",     photo: "craft-bench.jpg",  pop: "Cricut Maker 4: cuts vinyl, card and iron-on." },
+    { id: "mug",     name: "Mug press",          photo: "mug-press.jpg",    pop: "Mug press: heat-transfers your design onto a mug." },
+    { id: "tshirt",  name: "T-shirt heat press", photo: "tshirt-press.jpg", pop: "Heat press: designs onto T-shirts and tote bags." },
+    { id: "scanner", name: "3D scanner",         photo: "3d-scanner.jpg",   pop: "3D scanner: turns a real object into a 3D model." },
+    { id: "laser",   name: "Laser cutter",       photo: "laser-m1.jpg",     pop: "Laser cutter: flat parts and engravings." },
+    { id: "printer", name: "3D printer",         photo: "bambu-h2d.jpg",    pop: "3D printer: real 3D shapes, layer by layer." },
   ],
   requests: [
     { text: "I want vinyl stickers of my society logo.",               machine: "cricut" },
@@ -23,9 +26,5 @@ MS.data.games.craft = {
     { text: "Print a multi-colour toucan figure.",                     machine: "printer" },
     { text: "Cut an iron-on design for a tote bag.",                   machine: "cricut" },
   ],
-  learned: [
-    "Cricut Maker 4 cuts vinyl, card and iron-on; presses transfer designs to mugs, plates and shirts.",
-    "The 3D scanner captures real objects as 3D models.",
-    "Flat things → laser cutter. 3D shapes → 3D printer.",
-  ],
+  remember: "Flat → laser cutter. 3D shapes → 3D printer. Vinyl → Cricut. Mugs & shirts → presses.",
 };
