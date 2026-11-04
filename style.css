@@ -114,6 +114,8 @@ footer { display: flex; justify-content: space-between; margin-top: 24px; }
 @keyframes bob { 50% { transform: translateY(-6px); } }
 
 /* Quick Play hero */
+/* the hint under PLAY: centred under the button, padded in, wrapped evenly instead of one line edge to edge */
+.hero > .small { text-align: center; padding: 0 14px; line-height: 1.45; text-wrap: balance; }
 .hero.first { text-align: center; padding-top: 4px; }
 .logo { font-size: 32px; font-weight: 900; letter-spacing: 0.02em; margin: 6px 0 4px; color: var(--accent); text-shadow: 0 3px 0 var(--yellow); }
 .guide-row { display: flex; align-items: flex-end; gap: 6px; text-align: left; margin: 4px 0 10px; }
