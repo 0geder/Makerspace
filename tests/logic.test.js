@@ -95,6 +95,35 @@ H.sessions.forEach((s) => {
   const st = MS.daily.status(DAYS.indexOf(s.day), MS.daily.hourRange(s.time)[0]);
   assert.ok(st.open && st.why.some((w) => w.includes(s.host)), s.host);
 });
+// "Open now" on the Today card: agrees with status(), and says until when / from when
+const at = (dayName, h) => { const d = dateFor(dayName); d.setHours(Math.floor(h), Math.round((h % 1) * 60), 0, 0); return d; };
+same([MS.daily.clock(14), MS.daily.clock(17.5), MS.daily.clock(0), MS.daily.clock(12), MS.daily.clock(9)], ["2pm", "5:30pm", "12am", "12pm", "9am"]);
+H.sessions.forEach((s) => {
+  const [a, b] = MS.daily.hourRange(s.time), now = MS.daily.openNow(at(s.day, a));
+  assert.ok(now.open && now.who.some((w) => w.includes(s.host)), s.host + " is open at the start of their session");
+  assert.ok(MS.daily.status(DAYS.indexOf(s.day), b - 0.25).open, s.host + " open just before the end");
+  assert.ok(typeof MS.daily.openNow(at(s.day, b - 0.25)).until === "string" || MS.daily.openNow(at(s.day, b - 0.25)).until === null);
+});
+const [oa, ob] = MS.daily.hourRange(H.open.time), oday = MS.daily.dayRange(H.open.days)[0];
+const openDay = DAYS[oday];
+assert.ok(MS.daily.openNow(at(openDay, oa)).open);
+assert.ok(!MS.daily.openNow(at(openDay, 3)).open, "closed at 3am");
+// closed at 3am → says when it next opens, and that moment really is open
+const night = MS.daily.openNow(at(openDay, 3));
+assert.ok(night.next && /\d(am|pm)$/.test(night.next), night.next);
+assert.strictEqual(night.next, MS.daily.clock(MS.daily.hourRange(H.open.time)[0]) , "next opening is the first open slot of the day");
+// until matches the minutes you pass: one slot before closing, until is that closing time
+(() => {
+  const lastOpen = (() => { let h = oa; while (MS.daily.status(oday, h + 0.25).open) h += 0.25; return h + 0.25; })();
+  const o = MS.daily.openNow(at(openDay, lastOpen - 0.25));
+  assert.strictEqual(o.until, MS.daily.clock(lastOpen), "until names the closing time");
+})();
+// agrees with the Open-or-Closed game on every slot of the week
+DAYS.forEach((_, d) => [0, 3, 9, 10.5, 14, 16, 18, 20, 23.75].forEach((h) => {
+  const dt = at(DAYS[d], h);
+  assert.strictEqual(MS.daily.openNow(dt).open, MS.daily.status(d, h).open, DAYS[d] + " " + h);
+}));
+
 // the game's card times give both open and closed answers, so it can deal a mix
 const times = MS.data.games.hours.times, all = [];
 DAYS.forEach((_, d) => times.forEach((h) => all.push(MS.daily.status(d, h).open)));

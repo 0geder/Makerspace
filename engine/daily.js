@@ -107,5 +107,32 @@
       if (DAYS.indexOf(H.community.day) === d && inside(H.community.time)) why.push(H.community.name + ", " + H.community.time);
       return { open: why.length > 0, why };
     },
+
+    // 14 → "2pm", 17.5 → "5:30pm"
+    clock(h) {
+      const m = Math.round((h % 1) * 60), hh = Math.floor(h);
+      return ((hh % 12) || 12) + (m ? ":" + String(m).padStart(2, "0") : "") + (hh >= 12 ? "pm" : "am");
+    },
+
+    // Is the space open right now, and until / from when? Steps through status() in 15-minute slots,
+    // so staffed sessions and the meetup count as open, the same as in the Open-or-Closed game.
+    // → { open, who: ["Jasmin's session"], until: "5pm" }  or  { open: false, who: [], next: "Mon 9am" }
+    openNow(date) {
+      const day = date.getDay(), t = date.getHours() + date.getMinutes() / 60;
+      const slot = (i) => { // i slots after now → { d, h }
+        const abs = Math.floor(t * 4) + i, d = (day + Math.floor(abs / 96)) % 7;
+        return { d, h: (abs % 96) / 4 };
+      };
+      const at = (i) => { const s = slot(i); return MS.daily.status(s.d, s.h); };
+      const now = MS.daily.status(day, t);
+      now.who = now.why.filter((w) => !w.startsWith("Open hours")).map((w) => w.split(",")[0]); // "Jasmin's session"
+      for (let i = 1; i <= 7 * 96; i++) {
+        if (at(i).open === now.open) continue;
+        const s = slot(i), label = MS.daily.clock(s.h);
+        if (now.open) return { open: true, who: now.who, until: label };
+        return { open: false, who: [], next: (s.d === day && i < 96 ? "" : DAYS[s.d].slice(0, 3) + " ") + label };
+      }
+      return { open: now.open, who: now.who, until: null, next: null };
+    },
   };
 })();

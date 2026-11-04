@@ -67,13 +67,17 @@
   }
 
   function today() {
-    const t = MS.daily.today(new Date());
+    const now = new Date(), t = MS.daily.today(now), o = MS.daily.openNow(now);
+    const status = o.open
+      ? `🟢 Open now${o.until ? " until " + o.until : ""}${o.who.length ? " · " + o.who.join(" + ") : ""}`
+      : `🔴 Closed now${o.next ? " · opens " + o.next : ""}`;
     const lines = t.sessions.map((s) => "👋 " + s.time + " · session with " + s.host);
     if (t.community) lines.push("🤝 " + t.community.time + " · " + t.community.name);
     if (!t.sessions.length && t.next) lines.push("Next staffed session: " + t.next.day + " " + t.next.time + " with " + t.next.host);
     return `<section class="panel">
       <h2>📅 Today · ${esc(t.day)}</h2>
-      <p class="small">Open ${esc(t.open.days)}, ${esc(t.open.time)}</p>
+      <p class="open-now ${o.open ? "yes" : "no"}">${esc(status)}</p>
+      <p class="small">Open hours: ${esc(t.open.days)}, ${esc(t.open.time)}</p>
       <ul class="plain">${lines.map((l) => "<li>" + esc(l) + "</li>").join("")}</ul>
     </section>`;
   }
