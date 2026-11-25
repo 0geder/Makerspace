@@ -44,10 +44,10 @@ MS.games.tools = {
         });
       },
       draw(g) {
-        D.rr(g, 16, 68, 418, 96, 12, "#2a3142");
-        D.text(g, "TASK", 225, 90, { size: 13, bold: true, align: "center", color: "#aab" });
-        D.wrap(g, task.task, 225, 128, 396, { size: 20, bold: true, align: "center", valign: "middle", color: C.yellow });
-        D.text(g, "🎯 " + hits + " / " + d.targetHits, 16, 196, { size: 18, bold: true });
+        D.rr(g, 16, 68, 418, 96, 12, C.wall, C.wood, 3);
+        D.text(g, "TASK", 225, 90, { size: 13, bold: true, align: "center", color: C.muted });
+        D.wrap(g, task.task, 225, 128, 396, { size: 20, bold: true, align: "center", valign: "middle", color: C.accent });
+        D.text(g, "🎯 " + hits + " / " + d.targetHits, 16, 196, { size: 18, bold: true, color: C.ink });
         D.hearts(g, 352, 196, lives, d.lives);
         // pegboard
         D.rr(g, 16, 208, 418, 466, 10, C.wood);

@@ -55,6 +55,10 @@ be tapping, catching, stacking and swiping, with the facts arriving as quick pop
   `cheer` on good, `hit` on bad), the result screen (cheering, or `think` after a loss), and the home hero.
 - Real **photos of the space** stay on info pages, ready screens and the craft game.
 - Names, sheets and pose names live in `data/characters.js`.
+- **Theme: bright, like the real room.** Light terrazzo floor, white walls, birch-plywood panels and
+  headers, yellow (stools) and orange-red (signs) accents, dark text. No dark mode. The palette lives in
+  `colors` in `data/settings.js`; `style.css :root` mirrors it for the home page. Only the machines
+  themselves (printer interior, laser bed) stay dark, like the real ones.
 
 ## 5. Source material (from `drive-download-…/` photos + videos)
 

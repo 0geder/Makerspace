@@ -41,10 +41,10 @@ MS.games.recycling = {
       draw(g) {
         if (i >= pool.length) return;
         const it = pool[i];
-        D.text(g, "Item " + (i + 1) + " / " + pool.length + "   ✔ " + score, 16, 90, { size: 16, color: "#ccd" });
+        D.text(g, "Item " + (i + 1) + " / " + pool.length + "   ✔ " + score, 16, 90, { size: 16, color: C.muted });
         // the item drops in
         const drop = fb ? 0 : Math.max(0, 1 - (d.secondsPerItem - time) * 5) * -60;
-        D.rr(g, 65, 108 + drop, 320, 200, 18, "#f3efe6", fb ? (fb.ok ? C.good : C.bad) : null, 6);
+        D.rr(g, 65, 108 + drop, 320, 200, 18, C.wall, fb ? (fb.ok ? C.good : C.bad) : C.wood, 6);
         D.text(g, it.icon, 225, 205 + drop, { size: 70, emoji: true, align: "center" });
         D.wrap(g, it.name, 225, 276 + drop, 290, { size: 20, bold: true, align: "center", valign: "middle", color: "#222" });
         D.bar(g, 65, 322, 320, 10, fb ? 0 : time / d.secondsPerItem, time < 1.5 ? C.bad : C.yellow);

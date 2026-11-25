@@ -46,17 +46,17 @@ MS.games.craft = {
         // the maker asking
         const pose = fb ? (fb.ok ? SP.cheer(t) : "think") : "talk";
         SP.draw(g, R.who, pose, 66, 262, { h: 180 });
-        D.rr(g, 132, 76, 302, 152, 16, "#fff");
+        D.rr(g, 132, 76, 302, 152, 16, "#fff", C.wood, 3);
         g.fillStyle = "#fff"; g.beginPath(); g.moveTo(134, 170); g.lineTo(116, 186); g.lineTo(134, 190); g.fill();
         D.wrap(g, "“" + R.text + "”", 283, 152, 276, { size: 18, bold: true, align: "center", valign: "middle", color: "#1f2430" });
         D.bar(g, 132, 240, 302, 10, fb ? 0 : time / d.secondsPerRequest, time < 2 ? C.bad : C.yellow);
-        D.text(g, "Maker " + (i + 1) + " / " + rounds.length + "   ✔ " + score, 283, 274, { size: 14, align: "center", color: "#aab" });
+        D.text(g, "Maker " + (i + 1) + " / " + rounds.length + "   ✔ " + score, 283, 274, { size: 14, align: "center", color: C.muted });
         R.choices.forEach((m, k) => {
           const r = rect(k);
           const isRight = fb && m === R.right, isWrong = fb && k === fb.k && !fb.ok;
-          D.rr(g, r.x, r.y, r.w, r.h, 14, isRight ? C.good : isWrong ? C.bad : MS.input.hover(r) && !fb ? "#3a4256" : "#2a3142", "rgba(255,255,255,0.2)", 2);
+          D.rr(g, r.x, r.y, r.w, r.h, 14, isRight ? C.good : isWrong ? C.bad : MS.input.hover(r) && !fb ? C.tileHover : C.tile, isRight || isWrong ? null : C.wood, 3);
           D.photo(g, m.photo, r.x + 8, r.y + 8, r.w - 16, r.h - 54, 10);
-          D.wrap(g, m.name, r.x + r.w / 2, r.y + r.h - 24, r.w - 12, { size: 16, bold: true, align: "center", valign: "middle" });
+          D.wrap(g, m.name, r.x + r.w / 2, r.y + r.h - 24, r.w - 12, { size: 16, bold: true, align: "center", valign: "middle", color: isRight || isWrong ? "#fff" : C.ink });
         });
       },
     };

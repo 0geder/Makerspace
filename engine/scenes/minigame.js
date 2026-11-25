@@ -33,13 +33,13 @@
       good(x, y, label) {
         MS.audio.play("good");
         FX.burst(x, y, C.good);
-        FX.float(x, y - 10, label || "+1", C.yellow);
+        FX.float(x, y - 10, label || "+1", C.good);
         react = { pose: "cheer", t: 0.8 };
       },
       bad(x, y, label) {
         MS.audio.play("bad");
         FX.shake(10);
-        if (label) FX.float(x, y - 10, label, "#ff8a80");
+        if (label) FX.float(x, y - 10, label, C.bad);
         react = { pose: "hit", t: 0.8 };
       },
       say: (text, seconds) => FX.say(text, seconds),
@@ -57,33 +57,34 @@
   }
 
   function header(g) {
-    g.fillStyle = "rgba(0,0,0,0.3)"; g.fillRect(0, 0, 450, HEADER);
+    g.fillStyle = C.wood; g.fillRect(0, 0, 450, HEADER);
+    g.fillStyle = C.woodDark; g.fillRect(0, HEADER - 4, 450, 4);
     // your character's head and shoulders, reacting to every move
     const pose = react ? (react.pose === "cheer" ? SP.cheer(t) : react.pose) : "idle";
     g.save(); g.beginPath(); g.rect(0, 0, 70, HEADER); g.clip();
     SP.draw(g, me(), pose, 36, HEADER + 42, { h: 110, crop: 0.6 }); // head and shoulders only
     g.restore();
-    D.text(g, (st.badge ? st.badge.icon + " " : "") + data.title, 74, 35, { size: 18, bold: true, color: C.yellow });
-    if (D.button(g, { x: 392, y: 8, w: 48, h: 40 }, "✕", { size: 20, color: "#3a4256" })) leave();
+    D.text(g, (st.badge ? st.badge.icon + " " : "") + data.title, 74, 35, { size: 18, bold: true, color: C.ink });
+    if (D.button(g, { x: 392, y: 6, w: 48, h: 40 }, "✕", { size: 20, color: C.woodDark })) leave();
   }
 
   function drawReady(g) {
     // the real photo of the section, faded, behind everything
     D.photo(g, st.photo, 0, 0, 450, 330, 0);
     const grd = g.createLinearGradient(0, 120, 0, 330);
-    grd.addColorStop(0, "rgba(38,44,58,0)"); grd.addColorStop(1, "#262c3a");
+    grd.addColorStop(0, "rgba(247,242,232,0)"); grd.addColorStop(1, C.bg);
     g.fillStyle = grd; g.fillRect(0, 0, 450, 330);
     D.rr(g, 16, 16, 200, 34, 17, st.color);
-    D.text(g, (st.badge ? st.badge.icon + " " : "") + st.name, 116, 39, { size: 15, bold: true, align: "center" });
-    if (D.button(g, { x: 392, y: 12, w: 48, h: 40 }, "✕", { size: 20, color: "rgba(31,36,48,0.8)" })) return leave();
+    D.text(g, (st.badge ? st.badge.icon + " " : "") + st.name, 116, 39, { size: 15, bold: true, align: "center", color: "#fff" });
+    if (D.button(g, { x: 392, y: 12, w: 48, h: 40 }, "✕", { size: 20, color: C.woodDark })) return leave();
 
-    D.wrap(g, data.title, 225, 300, 410, { size: 32, bold: true, align: "center", color: C.yellow, shadow: "rgba(0,0,0,0.4)" });
-    D.wrap(g, data.howTo || "", 225, 352, 400, { size: 19, bold: true, align: "center" });
+    D.wrap(g, data.title, 225, 300, 410, { size: 34, bold: true, align: "center", color: C.accent, shadow: "rgba(255,255,255,0.9)" });
+    D.wrap(g, data.howTo || "", 225, 352, 400, { size: 19, bold: true, align: "center", color: C.ink });
 
     // your character, bouncing
     const bounce = Math.abs(Math.sin(t * 6)) * 18;
     SP.draw(g, me(), bounce > 9 ? "jump" : "idle", 225, 650 - bounce, { h: 160 });
-    g.fillStyle = "rgba(0,0,0,0.25)"; g.beginPath(); g.ellipse(225, 654, 40 - bounce / 2, 8, 0, 0, 7); g.fill();
+    g.fillStyle = C.line; g.beginPath(); g.ellipse(225, 654, 40 - bounce / 2, 8, 0, 0, 7); g.fill();
 
     // 3 · 2 · 1 · GO
     const step = S.countdownSeconds / 4;
@@ -91,13 +92,14 @@
     const k = 1 - ((t / step) % 1);
     if (n !== lastCount) { lastCount = n; MS.audio.play(n > 0 ? "tick" : "drop"); }
     const label = n > 0 ? String(n) : "GO!";
-    D.text(g, label, 225, 450, { size: 64 + k * 26, bold: true, align: "center", color: n > 0 ? "#fff" : C.good, shadow: "rgba(0,0,0,0.4)" });
-    D.text(g, "Tap to start now", 225, 676, { size: 14, align: "center", color: "#aab" });
+    D.text(g, label, 225, 450, { size: 64 + k * 26, bold: true, align: "center", color: n > 0 ? C.yellow : C.good, shadow: "rgba(70,45,20,0.35)" });
+    D.text(g, "Tap to start now", 225, 676, { size: 14, align: "center", color: C.muted });
   }
 
   function drawResult(g) {
     const r = result, a = Math.min(1, r.t * 3);
-    g.fillStyle = "rgba(15,18,26," + 0.93 * a + ")"; g.fillRect(0, 0, 450, 800);
+    g.globalAlpha = 0.96 * a; g.fillStyle = C.bg; g.fillRect(0, 0, 450, 800); g.globalAlpha = 1;
+    if (r.won) { g.globalAlpha = 0.35 * a; g.fillStyle = C.yellow; g.beginPath(); g.arc(225, 230, 150, 0, 7); g.fill(); g.globalAlpha = 1; }
     if (r.t < 0.35) return;
     const pose = r.won ? SP.cheer(r.t) : "think";
     SP.draw(g, me(), pose, 225, 300, { h: 200 });
@@ -106,19 +108,19 @@
       const s = Math.min(1, Math.max(0, (r.t - 0.5 - i * 0.2) * 5));
       const on = i < r.stars;
       if (on && s > 0 && s < 0.25 && !r["star" + i]) { r["star" + i] = true; MS.audio.play("good"); FX.burst(150 + i * 75, 345, C.yellow, 10); }
-      D.text(g, on ? "⭐" : "☆", 150 + i * 75, 370, { size: 40 + (on ? (1 - s) * 30 : 0), emoji: on, align: "center", color: "#5b6170" });
+      D.text(g, on ? "⭐" : "☆", 150 + i * 75, 370, { size: 40 + (on ? (1 - s) * 30 : 0), emoji: on, align: "center", color: C.speck });
     }
     let y = 420;
     const title = r.won ? (r.newBadge ? "Badge earned!" : "Nice one!") : "So close!";
-    y += D.wrap(g, title, 225, y, 410, { size: 30, bold: true, align: "center", color: r.won ? C.good : C.yellow });
-    if (r.won && st.badge) y += D.wrap(g, st.badge.icon + " " + st.badge.name, 225, y + 4, 410, { size: 20, bold: true, align: "center" }) + 4;
-    if (r.scoreText) y += D.wrap(g, r.scoreText, 225, y + 6, 410, { size: 15, align: "center", color: "#ccd" });
-    if (r.won && st.training) D.wrap(g, "⚠️ A badge isn't machine training. Book a session first.", 225, y + 18, 400, { size: 14, bold: true, align: "center", color: C.yellow });
+    y += D.wrap(g, title, 225, y, 410, { size: 30, bold: true, align: "center", color: r.won ? C.good : C.accent });
+    if (r.won && st.badge) y += D.wrap(g, st.badge.icon + " " + st.badge.name, 225, y + 4, 410, { size: 20, bold: true, align: "center", color: C.ink }) + 4;
+    if (r.scoreText) y += D.wrap(g, r.scoreText, 225, y + 6, 410, { size: 15, align: "center", color: C.muted });
+    if (r.won && st.training) D.wrap(g, "⚠️ A badge isn't machine training. Book a session first.", 225, y + 18, 400, { size: 14, bold: true, align: "center", color: "#a66a00" });
 
     const main = { x: 32, y: 572, w: 250, h: 64 }, home = { x: 294, y: 572, w: 124, h: 64 };
     const go = r.won ? next : start;
     if (D.button(g, main, r.won ? "Next ▶" : "↻ Try again", { size: 22, color: r.won ? C.good : C.accent }) || I.pressed(" ", "enter")) return go();
-    if (D.button(g, home, "Home", { size: 18, color: "#3a4256" })) leave();
+    if (D.button(g, home, "Home", { size: 18, color: C.woodDark })) leave();
   }
 
   MS.scenes.minigame = {
@@ -148,7 +150,7 @@
     },
 
     draw(g) {
-      g.fillStyle = "#262c3a"; g.fillRect(0, 0, 450, 800);
+      D.floor(g);
       if (phase === "ready") { drawReady(g); FX.drawBubble(g, 800); return; }
 
       const o = FX.offset();

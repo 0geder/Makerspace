@@ -38,13 +38,24 @@ MS.data.settings = {
   // Default pass mark for mini-games that score (0..1). Each game data file can override.
   passMark: 0.7,
 
+  // THEME — taken from the real room: light terrazzo floor, white walls, birch plywood,
+  // yellow stools and orange-red accents. The home page uses the same colours (style.css :root).
   colors: {
-    wood: "#d9b77e",
-    yellow: "#f2c230",
-    accent: "#e2583e",
-    ui: "#1f2430",
+    bg: "#f7f2e8",        // terrazzo floor: page and game background
+    speck: "#ddd3c2",     // the specks in the terrazzo
+    wall: "#ffffff",      // cards and panels
+    wood: "#e3c48f",      // birch plywood: headers, boards, benches
+    woodDark: "#b98c4c",  // plywood edge, secondary buttons
+    ink: "#2b2622",       // text
+    muted: "#7d7365",     // smaller, secondary text
+    tile: "#ffffff",      // tappable tiles
+    tileHover: "#fff1c7",
+    line: "rgba(70, 45, 20, 0.16)", // borders, shadows, empty bars
+    yellow: "#f2c230",    // the stools
+    accent: "#e2583e",    // orange-red, like the Check-in sign and laser stripes
     good: "#2eaa5c",
     bad: "#d64545",
+    ui: "#ffffff",        // panel fill (kept for older code)
   },
 
   sound: true,

@@ -52,17 +52,17 @@ MS.games.hours = {
       draw(g) {
         if (i >= cards.length) return;
         const c = cards[i];
-        D.text(g, "Card " + (i + 1) + " / " + cards.length + "   ✔ " + score, 225, 92, { size: 16, align: "center", color: "#ccd" });
+        D.text(g, "Card " + (i + 1) + " / " + cards.length + "   ✔ " + score, 225, 92, { size: 16, align: "center", color: C.muted });
         // the calendar card
-        const col = fb ? (c.open ? C.good : C.bad) : "#f3efe6";
-        D.rr(g, 55, 118, 340, 330, 22, "rgba(0,0,0,0.3)");
+        const col = fb ? (c.open ? C.good : C.bad) : C.wall;
+        D.rr(g, 55, 118, 340, 330, 22, C.line);
         D.rr(g, 50, 112, 340, 330, 22, col);
         D.rr(g, 50, 112, 340, 70, 22, C.accent);
         g.fillStyle = C.accent; g.fillRect(50, 150, 340, 32); // square off the bottom corners
-        D.text(g, DAYS[c.day].toUpperCase(), 220, 160, { size: 28, bold: true, align: "center" });
+        D.text(g, DAYS[c.day].toUpperCase(), 220, 160, { size: 28, bold: true, align: "center", color: "#fff" });
         D.text(g, "🕒", 220, 270, { size: 64, emoji: true, align: "center" });
-        D.text(g, fmt(c.hour), 220, 372, { size: 60, bold: true, align: "center", color: fb ? "#fff" : "#1f2430" });
-        if (fb) D.text(g, c.open ? "OPEN" : "CLOSED", 220, 422, { size: 22, bold: true, align: "center" });
+        D.text(g, fmt(c.hour), 220, 372, { size: 60, bold: true, align: "center", color: fb ? "#fff" : C.ink });
+        if (fb) D.text(g, c.open ? "OPEN" : "CLOSED", 220, 422, { size: 22, bold: true, align: "center", color: "#fff" });
         D.bar(g, 50, 462, 340, 10, fb ? 0 : time / d.secondsPerCard, time < 2 ? C.bad : C.yellow);
         if (!fb) {
           if (D.button(g, no, "CLOSED", { color: C.bad, size: 26 })) answer(false);

@@ -49,7 +49,7 @@
       g.globalAlpha = 1;
       floats.forEach((f) => {
         g.globalAlpha = Math.min(1, f.life * 2);
-        D.text(g, f.text, f.x, f.y, { size: 26, bold: true, align: "center", color: f.color, shadow: "rgba(0,0,0,0.5)" });
+        D.text(g, f.text, f.x, f.y, { size: 26, bold: true, align: "center", color: f.color, shadow: "rgba(255,255,255,0.95)" });
       });
       g.globalAlpha = 1;
     },
@@ -64,7 +64,8 @@
       MS.sprites.draw(g, MS.data.characters.guide, "talk", 52, by + 4, { h: 112 });
       g.font = "bold 15px " + D.FONT;
       const h = Math.max(54, 20 * Math.ceil(g.measureText(bubble.text).width / 300) + 22);
-      D.rr(g, 96, by - h - 26, 342, h, 14, "#fff", "rgba(0,0,0,0.25)", 2);
+      D.rr(g, 99, by - h - 23, 342, h, 14, "rgba(70,45,20,0.2)");
+      D.rr(g, 96, by - h - 26, 342, h, 14, "#fff", MS.data.settings.colors.wood, 3);
       g.fillStyle = "#fff"; g.beginPath(); g.moveTo(98, by - 62); g.lineTo(84, by - 52); g.lineTo(98, by - 44); g.fill();
       D.wrap(g, bubble.text, 267, by - 26 - h / 2, 316, { size: 15, bold: true, align: "center", valign: "middle", color: "#1f2430", lineHeight: 20 });
       g.restore();

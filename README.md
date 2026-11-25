@@ -24,7 +24,8 @@ with what is what while you play. Win to collect 9 badges (and up to 27 ⭐) and
   one-line tip, 3-2-1) → the mini-game → stars, badge, your character cheering and one
   "Remember" line → **Next ▶** spins again. When today's games are done: "Day complete!".
 - **Home** (after the first run): your character, level, badges and stars, a big PLAY button,
-  today's staffed session and meetup, a daily one-question challenge (with a 🔥 streak),
+  a "Today" card (🟢 Open now until 5pm · Jasmin's session, or 🔴 Closed now · opens Mon 9am; staffed
+  sessions and the meetup count as open, the same as in the Open-or-Closed game), a daily one-question challenge (with a 🔥 streak),
   "What do you want to make?" (a personal path of sections), and every section's info page.
 - **Levels by visits**: a visit is a different calendar day the game is opened.
   Level 1 *Newcomer* (visit 1) → Level 2 *Member* (visit 2) → Level 3 *Maker* (visit 4).
@@ -34,7 +35,13 @@ with what is what while you play. Win to collect 9 badges (and up to 27 ⭐) and
 
 ## QR codes for each area
 
-Each section has its own link: your Pages URL plus `?at=` and the station `id` from
+**Easiest: open `qr.html`** (on the live site, e.g. `https://<your-pages-url>/qr.html`). It shows one
+sticker per area with its QR code, an address box you can set to your public game address (it remembers it),
+and a **Print stickers** button (cards don't split across pages). Test one with your phone before printing.
+It uses the MIT-licensed [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) by Kazuhiko Arase,
+vendored in `vendor/` (no CDN, works offline).
+
+Or make them by hand: each section has its own link: your Pages URL plus `?at=` and the station `id` from
 `data/stations.js`. Opening it counts as being in that area (it unlocks the mini-game);
 a plain `#<id>` link opens the same page without unlocking anything. Put each one into any QR-code generator and stick it in that area,
 e.g. next to the machine usage QR.
@@ -84,7 +91,9 @@ Every game is short (≤ 6 rounds) and teaches through pop-ups, not question lis
 | How many visits unlock each level | `levels` in `data/settings.js` |
 | A mini-game's length, speed, pop-ups, `howTo`, `remember` line and content | `data/games/<game>.js` |
 | The characters' names (or add a new one) | `data/characters.js` |
-| Colours, star thresholds, wheel speed, countdown | `data/settings.js` |
+| The colour theme (game) | `colors` in `data/settings.js` |
+| The colour theme (home page) | `:root` at the top of `style.css` |
+| Star thresholds, wheel speed, countdown | `data/settings.js` |
 | Photos | drop a `.jpg` into `assets/photos/` and reference its file name |
 
 Values flow through automatically. Change the hours in `data/makerspace.js` and the
@@ -132,8 +141,10 @@ engine/             core loop + URL routing, input, drawing, audio, save, daily 
                     sprites (characters), fx (particles, shake, Bolt's pop-ups)
 engine/scenes/      home (HTML page), minigame (ready → play → result), wheel
 games/              one file per mini-game
-tests/              node tests/logic.test.js: visits, levels, daily challenge, opening hours, stars
-assets/photos/      photos of the real space
+tests/              node tests/logic.test.js: visits, levels, daily challenge, opening hours (incl. "open now"), stars
+assets/photos/      photos of the real space (home preloads only the ones you can play today)
+qr.html             printable QR sticker sheet for staff (one code per area)
+vendor/             qrcode-generator (MIT) for qr.html
 assets/characters/  character sprite sheets (Kenney, CC0)
 PROMPT.md           the full design brief / build prompt
 ```
